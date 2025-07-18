@@ -34,3 +34,6 @@ sysinfo.txt
 
 # 기타 자동 생성 디렉토리
 Logs/
+
+# Node
+node_modules/
