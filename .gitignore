@@ -1,0 +1,36 @@
+# Unity 관련 무시 파일
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Uu]serSettings/
+MemoryCaptures/
+*.unitypackage
+*.apk
+*.aab
+
+# Visual Studio / VSCode
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.user
+*.suo
+*.tmp
+*.userprefs
+
+# OS 무시 파일
+.DS_Store
+Thumbs.db
+
+# Unity 자체 로그 및 로컬 설정
+*.log
+*.pidb
+*.booproj
+
+# Crash reports
+sysinfo.txt
+
+# 기타 자동 생성 디렉토리
+Logs/
