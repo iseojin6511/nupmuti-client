@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections;
 
 public class LobbyUI : MonoBehaviour
 {
@@ -9,21 +10,58 @@ public class LobbyUI : MonoBehaviour
     public TMP_Text statusText;
     public Button startButton;
 
+    private SocketManager socketManager;
+
     private void Start()
     {
-        // 버튼 리스너 등록
+        socketManager = FindAnyObjectByType<SocketManager>();
+
+        nicknameInput.text = GenerateRandomNickname();
+
+        startButton.interactable = false;
         startButton.onClick.AddListener(OnClickStart);
 
-        // 서버 연결 시도
-        if (SocketManagerInstance() != null)
+        if (socketManager != null)
         {
-            SocketManagerInstance().Connect();
-            statusText.text = "🔌 서버 연결 중...";
+            statusText.text = "Connecting to server...";
+            socketManager.Connect();
+            StartCoroutine(WaitForConnection());
         }
         else
         {
-            statusText.text = "❌ SocketManager 없음!";
+            statusText.text = "SocketManager not found!";
         }
+    }
+
+    private string GenerateRandomNickname()
+    {
+        string[] adjectives = { "Fast", "Cool", "Smart", "Happy", "Dark", "Tiny" };
+        string[] nouns = { "Tiger", "Fox", "Panda", "Wolf", "Bear", "Cat" };
+        int number = UnityEngine.Random.Range(0, 999);
+        return $"{adjectives[UnityEngine.Random.Range(0, adjectives.Length)]}" +
+               $"{nouns[UnityEngine.Random.Range(0, nouns.Length)]}{number:D3}";
+    }
+
+    private IEnumerator WaitForConnection()
+    {
+        float timeout = 5f;
+        float elapsed = 0f;
+
+        while (elapsed < timeout)
+        {
+            if (socketManager != null && socketManager.IsConnected)
+            {
+                statusText.text = "Connected!";
+                startButton.interactable = true;
+                yield break;
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        statusText.text = "Connection failed.";
+        startButton.interactable = false;
     }
 
     private void OnClickStart()
@@ -32,19 +70,18 @@ public class LobbyUI : MonoBehaviour
 
         if (string.IsNullOrEmpty(nickname))
         {
-            statusText.text = "⚠️ 닉네임을 입력하세요.";
+            statusText.text = "Please enter a nickname!";
             return;
         }
 
-        // 서버에 닉네임 전송
-        var json = $"{{\"event\": \"joinGame\", \"nickname\": \"{nickname}\"}}";
-        SocketManagerInstance()?.SendSocketMessage(json);
-        statusText.text = $"🚀 {nickname}님 입장 요청 전송 중...";
-    }
+        if (!socketManager.IsConnected)
+        {
+            statusText.text = "Server not connected.";
+            return;
+        }
 
-    // SocketManager 싱글톤 인스턴스 반환
-    private SocketManager SocketManagerInstance()
-    {
-        return FindAnyObjectByType<SocketManager>();
+        string json = $"{{\"event\": \"joinGame\", \"nickname\": \"{nickname}\"}}";
+        socketManager.SendMessageToServer(json);
+        statusText.text = $"👤 {nickname} entering...";
     }
 }

@@ -1,98 +1,127 @@
-using System.Collections.Generic;
-using UnityEngine;
-using WebSocketSharp;
 using System;
-using System.Threading;
 using System.Text;
-
+using System.Threading.Tasks;
+using UnityEngine;
+using NativeWebSocket;
 
 public class SocketManager : MonoBehaviour
 {
     private string IP = "127.0.0.1";
     private string PORT = "6000";
-    //서버 서비스 이름
     private string SERVICE_NAME = "/Server";
 
-    public WebSocketSharp.WebSocket m_Socket = null;
+    private WebSocket m_Socket = null;
 
-    private void Start()
+    private async void Start()
     {
-        try
+    #if UNITY_WEBGL && !UNITY_EDITOR
+        string uri = "wss://yourserver.com/ws";
+    #else
+        string uri = "ws://localhost:3000";
+    #endif
+
+        Debug.Log($"🟡 Start() - Connecting to: {uri}");
+
+        m_Socket = new WebSocket(uri);
+
+        m_Socket.OnOpen += () =>
         {
-            m_Socket = new WebSocketSharp.WebSocket("ws://" + IP + ":" + PORT + SERVICE_NAME);
-            m_Socket.OnMessage += Recv;
-            m_Socket.OnClose += CloseConnect;
-        }
-        catch
-        { }
-       
+            Debug.Log("Connected to server!");
+        };
+
+        m_Socket.OnError += (e) =>
+        {
+            Debug.LogError("WebSocket Error: " + e);
+        };
+
+        m_Socket.OnClose += (e) =>
+        {
+            Debug.Log("🔌 WebSocket closed");
+        };
+
+        m_Socket.OnMessage += (bytes) =>
+        {
+            string msg = Encoding.UTF8.GetString(bytes);
+            Debug.Log($"📩 Received: {msg}");
+        };
+
+        await Connect(); // 이제 m_Socket이 null이 아니므로 실행됨
     }
 
-    //서버 연결함수
-    public void Connect()
+    public async Task Connect()
     {
-        try
-        {
-           if(m_Socket == null || !m_Socket.IsAlive)
-                m_Socket.Connect();
-
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e.ToString());
-        }
-    }
-
-    private void CloseConnect(object sender, CloseEventArgs e)
-    {
-        DisconncectServer();
-    }
-    //연결 해제 함수
-    public void DisconncectServer()
-    {
-        try
-        {
-            if (m_Socket == null)
-                return;
-
-            if (m_Socket.IsAlive)
-                m_Socket.Close();
-
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e.ToString());
-        }
-    }
-    
-    //서버로 데이터 전송할 함수
-    public void SendSocketMessage(string msg)
-    {
-        if (!m_Socket.IsAlive)
+        if (m_Socket == null)
             return;
+
+        if (m_Socket.State == WebSocketState.Open)
+        {
+            Debug.Log("Already connected.");
+            return;
+        }
+
         try
         {
-            m_Socket.Send(Encoding.UTF8.GetBytes(msg));
+            await m_Socket.Connect();
         }
-        catch (Exception)
+        catch (Exception e)
         {
-
-            throw;
+            Debug.LogError($"WebSocket Connect Error: {e}");
         }
-        
     }
-    //서버로 부터 받은 데이터 처리
-    public void Recv(object sender, MessageEventArgs e)
-    {
-        //string 데이터
-        Debug.Log(e.Data);
 
-        //bytes 데이터
-        Debug.Log(e.RawData);
-    }
-   
-    private void OnApplicationQuit()
+    public async void Disconnect()
     {
-        DisconncectServer();
+        if (m_Socket == null)
+            return;
+
+        try
+        {
+            await m_Socket.Close();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"WebSocket Close Error: {e}");
+        }
     }
+
+    public bool IsConnected => m_Socket != null && m_Socket.State == WebSocketState.Open;
+
+    // 외부에서 안전하게 메시지를 전송하기 위한 메서드
+    public void SendMessageToServer(string message)
+    {
+        SendSocketMessage(message); // 내부 async void 메서드 래핑
+    }
+
+    public async void SendSocketMessage(string msg)
+    {
+        if (m_Socket == null || m_Socket.State != WebSocketState.Open)
+        {
+            Debug.LogWarning("Socket is not open.");
+            return;
+        }
+
+        try
+        {
+            await m_Socket.SendText(msg);
+            Debug.Log($"[Send] {msg}");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Send Error: {e}");
+        }
+    }
+
+    private void Update()
+    {
+#if !UNITY_WEBGL || UNITY_EDITOR
+        m_Socket?.DispatchMessageQueue();
+#endif
+    }
+
+    private async void OnApplicationQuit()
+    {
+        await m_Socket.Close();
+    }
+
+    
 }
