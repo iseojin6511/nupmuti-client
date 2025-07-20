@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class LobbyUI : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class LobbyUI : MonoBehaviour
         nicknameInput.text = GenerateRandomNickname();
 
         startButton.interactable = false;
-        startButton.onClick.AddListener(OnClickStart);
+        startButton.onClick.AddListener(() => StartCoroutine(OnClickStart()));
 
         if (socketManager != null)
         {
@@ -64,24 +65,27 @@ public class LobbyUI : MonoBehaviour
         startButton.interactable = false;
     }
 
-    private void OnClickStart()
+    private IEnumerator OnClickStart()
     {
         string nickname = nicknameInput.text.Trim();
 
         if (string.IsNullOrEmpty(nickname))
         {
             statusText.text = "Please enter a nickname!";
-            return;
+            yield break;
         }
 
         if (!socketManager.IsConnected)
         {
             statusText.text = "Server not connected.";
-            return;
+            yield break;
         }
 
         string json = $"{{\"event\": \"joinGame\", \"nickname\": \"{nickname}\"}}";
         socketManager.SendMessageToServer(json);
         statusText.text = $"👤 {nickname} entering...";
+
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene("Waiting");
     }
 }

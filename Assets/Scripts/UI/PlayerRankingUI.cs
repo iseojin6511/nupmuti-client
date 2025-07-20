@@ -1,0 +1,103 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+public class PlayerRankingUI : MonoBehaviour
+{
+    public GameObject playerProfilePrefab;
+    public Transform playerListPanel;
+
+    private List<GameObject> playerItems = new();
+
+    public void ShowRankings(List<PlayerInfo> allPlayers, string localPlayerId)
+    {
+        Debug.Log($"[ShowRankings] Total players: {allPlayers.Count}");
+
+        foreach (Transform child in playerListPanel)
+        {
+            Destroy(child.gameObject);
+        }
+        playerItems.Clear();
+
+        for (int i = 0; i < allPlayers.Count; i++)
+        {
+            var p = allPlayers[i];
+
+            GameObject item = Instantiate(playerProfilePrefab, playerListPanel, false);
+            playerItems.Add(item);
+
+            // 닉네임 설정
+            TMP_Text nameText = item.transform.Find("InfoGroup/NicknameText")?.GetComponent<TMP_Text>();
+            if (nameText != null)
+            {
+                nameText.text = p.nickname;
+            }
+
+            // 카드 수 텍스트 (ScoreGroup 안이라면 여기에 추가 필요)
+            TMP_Text scoreText = item.transform.Find("InfoGroup/ScoreGroup/CardLeft")?.GetComponent<TMP_Text>();
+            if (scoreText != null)
+            {
+                scoreText.text = $"x{p.cardsLeft}";
+            }
+
+            // Image/Image 오브젝트에 Outline 없으면 추가
+            var profileImage = item.transform.Find("Image/Image/ProfileImage")?.GetComponent<Image>();
+            if (profileImage != null)
+            {
+                if (p.profileImage != null)
+                {
+                    profileImage.sprite = p.profileImage;
+                }
+
+                // Outline 설정
+                if (profileImage.GetComponent<Outline>() == null)
+                {
+                    var outline = profileImage.gameObject.AddComponent<Outline>();
+                    outline.effectColor = Color.clear;
+                    outline.effectDistance = new Vector2(3f, -3f);
+                }
+            }
+        }
+    }
+
+    public void HighlightCurrentPlayer(string currentPlayerId)
+    {
+        foreach (var item in playerItems)
+        {
+            var nicknameText = item.transform.Find("InfoGroup/NicknameText")?.GetComponent<TMP_Text>();
+            if (nicknameText == null) continue;
+
+            bool isCurrent = nicknameText.text == currentPlayerId;
+            HighlightPlayer(item.transform, isCurrent);
+        }
+    }
+
+    public void HighlightPlayer(Transform playerItem, bool isActive)
+    {
+        var profileImage = playerItem.transform.Find("Image/Image/ProfileImage")?.GetComponent<Image>();
+        var outline = profileImage?.GetComponent<Outline>();
+
+        if (profileImage != null)
+        {
+            profileImage.transform.localScale = isActive ? Vector3.one * 1.3f : Vector3.one;
+        }
+
+        if (outline != null)
+        {
+            outline.effectColor = isActive ? Color.yellow : Color.clear;
+        }
+    }
+    public GameObject FindPlayerUIById(string playerId)
+    {
+        foreach (var item in playerItems)
+        {
+            var nameText = item.transform.Find("InfoGroup/NicknameText")?.GetComponent<TMP_Text>();
+            if (nameText != null && nameText.text == playerId)
+                return item;
+        }
+        return null;
+    }
+}
+
+
