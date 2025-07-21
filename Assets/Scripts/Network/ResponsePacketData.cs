@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic; 
 
 public abstract record ResponsePacketData
 {
@@ -70,4 +71,8 @@ public abstract record ResponsePacketData
 
     // 잘못된 카드 제출
     public sealed record InvalidCard(string message) : ResponsePacketData;
+
+    public sealed record PileUpdate(string playerId, List<int> cards) : ResponsePacketData;
+    
+    public sealed record HasPassed(string message) : ResponsePacketData;
 }

@@ -1437,7 +1437,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -723, y: 19}
+  m_AnchoredPosition: {x: -719, y: 5}
   m_SizeDelta: {x: 304.6997, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1197313921
@@ -1912,19 +1912,11 @@ MonoBehaviour:
   myPlayerId: 
   cardSpawner: {fileID: 1813951056}
   submitManager: {fileID: 636765501}
-  profileImages:
-  - {fileID: 8698248527754002512, guid: aa5754a05edcb435e99ce989512b22a8, type: 3}
-  - {fileID: 5864101458112632582, guid: b108b2fbb93d04f11b30303f41741cce, type: 3}
-  - {fileID: -7455397896825555174, guid: 3c2fdbd9848f342f28c8bdc5347251e9, type: 3}
-  - {fileID: 7390716801938230324, guid: ac285f55fc71e40d0b3853a67b151701, type: 3}
-  - {fileID: -7111496644548108167, guid: 5d7b663fbeef14a3a88ca7692c2af401, type: 3}
-  - {fileID: 8946663206335213512, guid: f5d62d2ae6ded459a81b2150c93f49f4, type: 3}
-  playerInfos: []
-  submitButton: {fileID: 917071392}
-  passButton: {fileID: 1160004458}
   rankingUI: {fileID: 1197313921}
   cardShuffler: {fileID: 1813951055}
   playerActionUI: {fileID: 1813951057}
+  submitButton: {fileID: 917071392}
+  passButton: {fileID: 1160004458}
   cardPrefab: {fileID: 1873407411163814594, guid: 234cb63a930a74b51bf584c5e04e1f80, type: 3}
 --- !u!1 &1813951052
 GameObject:

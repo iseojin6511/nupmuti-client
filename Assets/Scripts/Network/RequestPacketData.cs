@@ -22,7 +22,7 @@ public abstract record RequestPacketData
     public sealed record StartGame() : RequestPacketData;
 
     // 카드 제출
-    public sealed record ThrowSubmit(string clientId, List<string> cards) : RequestPacketData;
+    public sealed record ThrowSubmit(string clientId, List<int> cards) : RequestPacketData;
 
     // 카드 플레이
     public sealed record PlayCard(List<string> cards) : RequestPacketData;

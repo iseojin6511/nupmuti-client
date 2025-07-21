@@ -5,10 +5,10 @@ using TMPro; // ← 이거 꼭 필요함!
 public class WaitingManager : MonoBehaviour
 {
     public TMP_Text playerCountText;
+    public UnityEngine.UI.Button startGameButton;
     private int playerCount = 1;
     private int maxPlayer = 6;
-    public UnityEngine.UI.Button startGameButton;
-
+    
     private void Start()
     {
         // 핸들러 등록
@@ -29,6 +29,7 @@ public class WaitingManager : MonoBehaviour
     /**
     * <방장 여부 확인>
     */
+
     private void OnYouAreHost(ResponsePacketData.YouAreHost data)
     {
         if (data.isHost) {
@@ -75,7 +76,7 @@ public class WaitingManager : MonoBehaviour
     public void OnClickStartGameButton()
     {
         // 게임 시작 요청 패킷 전송
-        NetworkManager.Instance.Send(new RequestPacketData.StartGame(PlayerSession.ClientId));
+        NetworkManager.Instance.Send(new RequestPacketData.StartGame());
     }
 
 

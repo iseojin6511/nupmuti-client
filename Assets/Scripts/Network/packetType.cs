@@ -7,6 +7,7 @@ public static class PACKET_TYPE
     // Room
     public const int ENTER_ROOM = 1001; // 입장하기 버튼, 닉네임 입력란
     public const int LEAVE_ROOM = 1002; // 뒤로 가기 버튼
+    public const int GET_ROOM_INFO = 1003; // 방 정보 요청
     public const int CREATE_ROOM = 1004;
     public const int YOU_ARE_HOST = 1005; // 방장 - 게임 시작하기 버튼이 있는 UI
     public const int READY_GAME = 1006; // 시작하기 버튼이 활성화된 UI

@@ -17,6 +17,7 @@ public class LobbyUI : MonoBehaviour
     private void Start()
     {
         socketManager = FindAnyObjectByType<SocketManager>();
+        
 
         nicknameInput.text = GenerateRandomNickname();
 

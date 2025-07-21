@@ -26,7 +26,7 @@ public class CardShuffler : MonoBehaviour
         StartCoroutine(ShufflePile());
     }
 
-    void CreateCardPile()
+    public void CreateCardPile()
     {
         for (int i = 0; i < cardCount; i++)
         {
@@ -38,6 +38,7 @@ public class CardShuffler : MonoBehaviour
 
             cardBacks.Add(rt);
         }
+        StartCoroutine(ShufflePile());
     }
 
     IEnumerator ShufflePile()

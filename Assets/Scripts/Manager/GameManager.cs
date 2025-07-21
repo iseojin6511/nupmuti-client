@@ -1,4 +1,118 @@
 using System.Collections.Generic;
+using UnityEngine;
+
+public class GameManager : MonoBehaviour
+{
+    public List<string> playerIds;
+    public int currentTurnIndex;
+    public string myPlayerId;
+    public CardSpawner cardSpawner;
+    public CardSubmitManager submitManager;
+    public PlayerRankingUI rankingUI;
+    public CardShuffler cardShuffler;
+    public PlayerActionUI playerActionUI;
+    public UnityEngine.UI.Button submitButton;
+    public UnityEngine.UI.Button passButton;
+    [SerializeField] private GameObject cardPrefab;
+
+    private void Start()
+    {
+        // 서버 응답(신호)에 맞는 핸들러 등록
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourTurn>(OnYourTurn);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.InvalidCard>(OnInvalidCard);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPlayerCardPlayed);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.HasPassed>(OnPlayerPassed);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealCards>(OnDealCards);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourRank>(OnYourRank);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourOrder>(OnYourOrder);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed);
+        // ... 기타 필요한 핸들러 등록
+    }
+
+    // 내 턴 신호가 오면 버튼 활성화
+    private void OnYourTurn(ResponsePacketData.YourTurn data)
+    {
+        submitButton.interactable = true;
+        passButton.interactable = true;
+        playerActionUI.ShowMessage(data.message ?? "당신의 턴입니다!");
+    }
+
+    // 카드 제출 버튼 클릭 시 서버에 제출 요청
+    public void OnClickSubmit()
+    {
+        if (!submitButton.interactable) return;
+        var selectedCards = submitManager.OnSubmit();
+        var req = new RequestPacketData.ThrowSubmit(PlayerSession.ClientId, selectedCards);
+        NetworkManager.Instance.Send(req);
+        submitButton.interactable = false;
+        passButton.interactable = false;
+    }
+
+    // 패스 버튼 클릭 시 서버에 패스 요청
+    public void OnClickPass()
+    {
+        if (!passButton.interactable) return;
+        var req = new RequestPacketData.Pass(PlayerSession.ClientId);
+        NetworkManager.Instance.Send(req);
+        submitButton.interactable = false;
+        passButton.interactable = false;
+    }
+
+    // 서버에서 카드 제출이 유효하지 않다는 신호가 오면 안내 및 재시도
+    private void OnInvalidCard(ResponsePacketData.InvalidCard data)
+    {
+        playerActionUI.ShowMessage(data.message);
+        submitButton.interactable = true;
+        passButton.interactable = true;
+    }
+
+    // 서버에서 카드 분배 신호가 오면 UI 갱신
+    private void OnDealCards(ResponsePacketData.DealCards data)
+    {
+        playerActionUI.ShowMessage(data.message);
+        cardShuffler.CreateCardPile();
+        // 카드 분배 UI/상태 갱신 (data 구조에 맞게 구현)
+    }
+
+    // 서버에서 내 랭크 정보 신호가 오면 UI 갱신
+    private void OnYourRank(ResponsePacketData.YourRank data)
+    {
+        //rankingUI.SetMyRank(data.rank);
+        playerActionUI.ShowMessage(data.message);
+    }
+
+    // 서버에서 내 순서 정보 신호가 오면 UI 갱신
+    private void OnYourOrder(ResponsePacketData.YourOrder data)
+    {
+        playerActionUI.ShowMessage(data.message);
+        // 순서 관련 UI 갱신
+    }
+
+    // 서버에서 상대방 카드 제출 브로드캐스트 신호가 오면 UI 갱신
+    private void OnPlayerCardPlayed(ResponsePacketData.PileUpdate data)
+    {
+        playerActionUI.PlayCardFromPlayer(data.playerId, data.cards);
+        // 카드 UI 갱신 등
+    }
+
+    // 서버에서 상대방 패스 브로드캐스트 신호가 오면 UI 갱신
+    private void OnPlayerPassed(ResponsePacketData.HasPassed data)
+    {
+        playerActionUI.ShowMessage(data.message);
+        // UI 갱신 등
+    }
+
+    // 서버에서 모두 패스 신호가 오면 센터 카드 정리 등 UI 갱신
+    private void OnAllPassed(ResponsePacketData.AllPassed data)
+    {
+        playerActionUI.ShowMessage(data.message);
+        // 센터 카드 정리 등
+    }
+}
+
+/*
+
+using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using System.Linq;
@@ -278,3 +392,5 @@ public class GameManager : MonoBehaviour
         // 턴 넘기지 않음! → UpdateTurnUI 흐름 유지
     }
 }
+
+*/

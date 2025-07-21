@@ -15,10 +15,23 @@ public class PlayerActionUI : MonoBehaviour
     public GameObject messagePanel;  // 메시지를 띄울 Canvas
     public float messageDuration = 2f; 
 
-    public void PlayCardFromPlayer(string playerId, List<GameObject> cardObjects)
+    public void PlayCardFromPlayer(string playerId, List<int> cardValues)
     {
         GameObject playerUI = rankingUI.FindPlayerUIById(playerId);
         if (playerUI == null) return;
+
+        // 1. 카드 오브젝트 생성
+        List<GameObject> cardObjects = new List<GameObject>();
+        foreach (int value in cardValues)
+        {
+            GameObject card = Instantiate(cardPrefab);
+            CardUI cardUI = card.GetComponent<CardUI>();
+            if (cardUI != null)
+            {
+                cardUI.SetCard(value);
+            }
+            cardObjects.Add(card);
+        }
 
         Debug.Log($"[PlayCardFromPlayer] 카드 개수: {cardObjects.Count}");
 

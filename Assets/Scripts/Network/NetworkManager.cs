@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PACKET_TYPE;
+using static PACKET_TYPE;
 
 public class NetworkManager : MonoBehaviour
 {
