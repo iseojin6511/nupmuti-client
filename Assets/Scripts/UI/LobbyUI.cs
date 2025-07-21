@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System;
 
 public class LobbyUI : MonoBehaviour
 {
@@ -65,7 +66,7 @@ public class LobbyUI : MonoBehaviour
         startButton.interactable = false;
     }
 
-    private IEnumerator OnClickStart()
+   private IEnumerator OnClickStart()
     {
         string nickname = nicknameInput.text.Trim();
 
@@ -81,8 +82,16 @@ public class LobbyUI : MonoBehaviour
             yield break;
         }
 
-        string json = $"{{\"event\": \"joinGame\", \"nickname\": \"{nickname}\"}}";
-        socketManager.SendMessageToServer(json);
+        // 1. clientId 생성 및 저장 (최초 한 번만)
+        if (string.IsNullOrEmpty(PlayerSession.ClientId))
+        {
+            PlayerSession.ClientId = Guid.NewGuid().ToString();
+        }
+
+        // 2. 서버에 입장 요청 (nickname 함께 전송)
+        var req = new RequestPacketData.EnterRoom(nickname);
+        NetworkManager.Instance.Send(req);
+
         statusText.text = $"👤 {nickname} entering...";
 
         yield return new WaitForSeconds(1f);

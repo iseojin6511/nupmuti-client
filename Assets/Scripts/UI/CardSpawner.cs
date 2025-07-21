@@ -44,6 +44,7 @@ public class CardSpawner : MonoBehaviour
         int myCardCount = cardValues.Count;
         int playerCount = playerIds.Count;
 
+
         while (myCardIndex < myCardCount)
         {
             for (int i = 0; i < playerCount; i++)

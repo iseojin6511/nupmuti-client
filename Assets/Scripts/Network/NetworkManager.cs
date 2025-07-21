@@ -84,6 +84,7 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
+
     public async void Send(RequestPacketData data)
     {
         int signal = GetSignalFromRequest(data.GetType());
@@ -116,20 +117,44 @@ public class NetworkManager : MonoBehaviour
     private readonly Dictionary<Type, Action<ResponsePacketData>> _responseHandlers = new();
     private readonly Dictionary<int, Type> _responseTypes = new()
     {
+        { 1, typeof(ResponsePacketData.Pong) },
         { 1001, typeof(ResponsePacketData.EnterRoom) },
         { 1002, typeof(ResponsePacketData.LeaveRoom) },
-        { 1003, typeof(ResponsePacketData.GetRoomList) },
-        { 1004, typeof(ResponsePacketData.CreateRoom) },
-        { 4001, typeof(ResponsePacketData.Login) }
+        { 1007, typeof(ResponsePacketData.PlayerCountChanged) },
+        { 1005, typeof(ResponsePacketData.YouAreHost) },
+        { 1011, typeof(ResponsePacketData.ReadyGame) },
+        { 1010, typeof(ResponsePacketData.StartGame) },
+        { 1020, typeof(ResponsePacketData.StartRound) },
+        { 1022, typeof(ResponsePacketData.FirstRoundRules) },
+        { 1023, typeof(ResponsePacketData.YourCard) },
+        { 1103, typeof(ResponsePacketData.YourRank) },
+        { 1104, typeof(ResponsePacketData.YourOrder) },
+        { 1105, typeof(ResponsePacketData.RoundStarted) },
+        { 1106, typeof(ResponsePacketData.DealCards) },
+        { 1107, typeof(ResponsePacketData.ExchangePhase) },
+        { 1108, typeof(ResponsePacketData.ExchangeInfo) },
+        { 1109, typeof(ResponsePacketData.ExchangeInfo2) },
+        { 1111, typeof(ResponsePacketData.ExchangeDone) },
+        { 1112, typeof(ResponsePacketData.YourTurn) },
+        { 1115, typeof(ResponsePacketData.AllPassed) },
+        { 1116, typeof(ResponsePacketData.EndTurn) },
+        { 1028, typeof(ResponsePacketData.DoneRound) },
+        { 1030, typeof(ResponsePacketData.InvalidCard) }
+        // ... 필요시 추가
     };
 
     private readonly Dictionary<Type, int> _requestSignals = new()
     {
+        { typeof(RequestPacketData.Ping), 1 },
         { typeof(RequestPacketData.EnterRoom), 1001 },
         { typeof(RequestPacketData.LeaveRoom), 1002 },
-        { typeof(RequestPacketData.GetRoomList), 1003 },
-        { typeof(RequestPacketData.CreateRoom), 1004 },
-        { typeof(RequestPacketData.Login), 4001 }
+        { typeof(RequestPacketData.GetRoomInfo), 1003 },
+        { typeof(RequestPacketData.StartGame), 1010 },
+        { typeof(RequestPacketData.ThrowSubmit), 1110 },
+        { typeof(RequestPacketData.PlayCard), 1024 },
+        { typeof(RequestPacketData.Pass), 1025 },
+        { typeof(RequestPacketData.DoneRound), 1028 }
+        // ... 필요시 추가
     };
 
     private int GetSignalFromRequest(Type type)

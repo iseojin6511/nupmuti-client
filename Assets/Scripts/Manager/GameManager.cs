@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public CardSubmitManager submitManager;
     public Sprite[] profileImages;
 
+    public List<PlayerInfo> playerInfos = new List<PlayerInfo>();
+
     public UnityEngine.UI.Button submitButton;
     public UnityEngine.UI.Button passButton;
     public PlayerRankingUI rankingUI;
@@ -36,19 +38,25 @@ public class GameManager : MonoBehaviour
 
         myPlayerId = "PlayerA";
 
-        var playerInfos = new List<PlayerInfo>();
+        
         var nicknames = new[] { "PlayerA", "PlayerB", "PlayerC", "PlayerD", "PlayerE", "PlayerF" };
         var ranks = new[] { 1, 3, 2, 6, 5, 4 };
-        var cards = new[] { 5, 3, 2, 5, 3, 2 };
+        System.Random rand = new System.Random();
 
         for (int i = 0; i < nicknames.Length; i++)
         {
+            var cardValues = new List<int>();
+            for (int j = 0; j < 10; j++)  // 각 플레이어에게 카드 10장
+            {
+                cardValues.Add(rand.Next(1, 11)); // 1~10 사이의 랜덤 값
+            }
+
             playerInfos.Add(new PlayerInfo
             {
                 nickname = nicknames[i],
                 rank = ranks[i],
-                cardsLeft = cards[i],
-                profileImage = profileImages[i]
+                profileImage = profileImages[i],
+                cardValues = cardValues
             });
         }
 
@@ -58,6 +66,7 @@ public class GameManager : MonoBehaviour
         playerIds = playerInfos.Select(p => p.nickname).ToList();
 
         cardShuffler.playerIds = playerIds;
+
 
 
         rankingUI.ShowRankings(playerInfos, myPlayerId);
@@ -103,8 +112,13 @@ public class GameManager : MonoBehaviour
     public void OnClickSubmit()
     {
         if (!IsMyTurn()) return;
+
         passedPlayers.Clear();
-        submitManager.OnSubmit();
+
+        List<int> submittedValues = submitManager.OnSubmit();
+
+        PlayerInfo myInfo = playerInfos.Find(p => p.nickname == myPlayerId);
+
         NextTurn();
     }
 
@@ -139,47 +153,62 @@ public class GameManager : MonoBehaviour
 
         if (passedPlayers.Count == playerIds.Count - 1)
         {
-            Debug.Log("hihihihi");
-            OnAllPassed();
-            StartCoroutine(DelayedSequence());
+            StartCoroutine(HandleAllPassedThenContinue());
+            return; // 흐름 중단 (Turn 메시지 띄우지 않음)
         }
 
+        ProceedTurnUI();
+    }
+
+    private void ProceedTurnUI()
+    {
         bool isMyTurn = IsMyTurn();
         submitButton.interactable = isMyTurn;
         passButton.interactable = isMyTurn;
 
-        // 현재 턴 플레이어 하이라이트
         string currentPlayerId = playerIds[currentTurnIndex];
         playerActionUI.ShowMessage($"'{currentPlayerId}' Turn!");
         rankingUI.HighlightCurrentPlayer(currentPlayerId);
 
-        // 자동 테스트: PlayerB 턴일 때 자동 제출
         if (currentPlayerId == "PlayerB")
         {
-            Debug.Log("[자동] PlayerB의 턴입니다. 2초 후 Submit 시도.");
-            Invoke(nameof(TestOpponentSubmit), 3f);  // 2초 후 자동 제출
+            Invoke(nameof(TestOpponentSubmit), 3f);
         }
         else if (currentPlayerId == "PlayerC")
         {
-            Debug.Log("[자동] PlayerC의 턴입니다. 2초 후 Pass 시도.");
-            StartCoroutine(DelayedOpponentPass("PlayerC", 3f)); // 2초 후 자동 패스
+            StartCoroutine(DelayedOpponentPass("PlayerC", 3f));
         }
         else if (currentPlayerId == "PlayerD")
         {
-            Debug.Log("[자동] PlayerD의 턴입니다. 2초 후 Pass 시도.");
-            StartCoroutine(DelayedOpponentPass("PlayerD", 3f)); // 2초 후 자동 패스
+            StartCoroutine(DelayedOpponentPass("PlayerD", 3f));
         }
         else if (currentPlayerId == "PlayerE")
         {
-            Debug.Log("[자동] PlayerE의 턴입니다. 2초 후 Pass 시도.");
-            StartCoroutine(DelayedOpponentPass("PlayerE", 3f)); // 2초 후 자동 패스
+            StartCoroutine(DelayedOpponentPass("PlayerE", 3f));
         }
         else if (currentPlayerId == "PlayerF")
         {
-            Debug.Log("[자동] PlayerF의 턴입니다. 2초 후 Pass 시도.");
-            StartCoroutine(DelayedOpponentPass("PlayerF", 3f)); // 2초 후 자동 패스
+            StartCoroutine(DelayedOpponentPass("PlayerF", 3f));
         }
     }
+
+
+    private IEnumerator HandleAllPassedThenContinue()
+{
+    Debug.Log("All players passed. Clearing center pile.");
+    playerActionUI.ShowMessage("All Player Passed");
+
+    yield return new WaitForSeconds(1.5f); // 메시지를 보여줄 시간
+
+    submitManager.ClearCenterPile();
+
+    yield return new WaitForSeconds(1.0f); // 카드 정리 애니메이션 시간
+
+    passedPlayers.Clear();
+
+    // 이후 정상적인 턴 진행
+    ProceedTurnUI();
+}
 
     private IEnumerator DelayedOpponentPass(string playerId, float delay)
     {
@@ -230,22 +259,22 @@ public class GameManager : MonoBehaviour
     // 🟡 모두가 패스했을 경우 (턴 초기화)
     public void OnAllPassed()
     {
-        StartCoroutine(HandleAllPassed());
+        StartCoroutine(HandleAllPassedSequence());
     }
 
-private IEnumerator HandleAllPassed()
-{
-    Debug.Log("All players passed. Clearing center pile.");
-    playerActionUI.ShowMessage("All players passed. Clearing center pile.");
+    private IEnumerator HandleAllPassedSequence()
+    {
+        Debug.Log("All players passed. Clearing center pile.");
+        playerActionUI.ShowMessage("All players passed. Clearing center pile.");
 
-    yield return new WaitForSeconds(1.5f); // 메시지 표시를 위해 잠시 대기
+        yield return new WaitForSeconds(1.5f);  // 메시지 표시 시간
 
-    passedPlayers.Clear();
-    submitManager.ClearCenterPile();
+        submitManager.ClearCenterPile();
 
-    yield return new WaitForSeconds(1.5f); // 카드 정리 후 약간 대기
+        yield return new WaitForSeconds(1.0f);  // 연출 후 약간 대기
 
-}
+        passedPlayers.Clear();
 
-
+        // 턴 넘기지 않음! → UpdateTurnUI 흐름 유지
+    }
 }

@@ -81,7 +81,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         // 마우스 내렸을 때 원래 크기 복원
         transform.localScale = originalScale;
     }
-    
+
 
     public void DisableInteraction()
     {
