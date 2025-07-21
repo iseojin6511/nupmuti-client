@@ -73,6 +73,9 @@ public abstract record ResponsePacketData
     public sealed record InvalidCard(string message) : ResponsePacketData;
 
     public sealed record PileUpdate(string playerId, List<int> cards) : ResponsePacketData;
-    
+
+    public sealed record CreateRoom(bool success) : ResponsePacketData;
+
     public sealed record HasPassed(string message) : ResponsePacketData;
+
 }

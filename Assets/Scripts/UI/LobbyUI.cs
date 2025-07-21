@@ -17,6 +17,7 @@ public class LobbyUI : MonoBehaviour
     private void Start()
     {
         socketManager = FindAnyObjectByType<SocketManager>();
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.CreateRoom>(OnCreateRoom);
         
 
         nicknameInput.text = GenerateRandomNickname();
@@ -43,6 +44,20 @@ public class LobbyUI : MonoBehaviour
         int number = UnityEngine.Random.Range(0, 999);
         return $"{adjectives[UnityEngine.Random.Range(0, adjectives.Length)]}" +
                $"{nouns[UnityEngine.Random.Range(0, nouns.Length)]}{number:D3}";
+    }
+
+    private void OnCreateRoom(ResponsePacketData.CreateRoom data)
+    {
+        if (data.success)
+        {   
+            Debug.Log("CreateRoom success");
+            SceneManager.LoadScene("Waiting");
+        }else{
+            Debug.Log("CreateRoom failed");
+            string nickname = nicknameInput.text.Trim();
+            var req = new RequestPacketData.EnterRoom(nickname);
+            NetworkManager.Instance.Send(req);
+        }
     }
 
     private IEnumerator WaitForConnection()
@@ -90,12 +105,9 @@ public class LobbyUI : MonoBehaviour
         }
 
         // 2. 서버에 입장 요청 (nickname 함께 전송)
-        var req = new RequestPacketData.EnterRoom(nickname);
+        var req = new RequestPacketData.CreateRoom(nickname);
         NetworkManager.Instance.Send(req);
 
         statusText.text = $"👤 {nickname} entering...";
-
-        yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene("Waiting");
     }
 }

@@ -32,10 +32,12 @@ public class WaitingManager : MonoBehaviour
 
     private void OnYouAreHost(ResponsePacketData.YouAreHost data)
     {
+        Debug.Log("OnYouAreHost: " + data.isHost);
         if (data.isHost) {
             startGameButton.gameObject.SetActive(true); // 방장만 버튼 보임
         }
     }
+
 
     /**
     * <서버에서 방 나가기 응답 처리, 성공하면 로비로 이동>
