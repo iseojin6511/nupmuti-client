@@ -60,7 +60,6 @@ public class GameManager : MonoBehaviour
         cardShuffler.playerIds = playerIds;
 
 
-
         rankingUI.ShowRankings(playerInfos, myPlayerId);
 
         cardSpawner.SetLocalPlayerId(myPlayerId);
