@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PACKET_TYPE;
 
 public class NetworkManager : MonoBehaviour
 {
@@ -117,43 +118,43 @@ public class NetworkManager : MonoBehaviour
     private readonly Dictionary<Type, Action<ResponsePacketData>> _responseHandlers = new();
     private readonly Dictionary<int, Type> _responseTypes = new()
     {
-        { 1, typeof(ResponsePacketData.Pong) },
-        { 1001, typeof(ResponsePacketData.EnterRoom) },
-        { 1002, typeof(ResponsePacketData.LeaveRoom) },
-        { 1007, typeof(ResponsePacketData.PlayerCountChanged) },
-        { 1005, typeof(ResponsePacketData.YouAreHost) },
-        { 1011, typeof(ResponsePacketData.ReadyGame) },
-        { 1010, typeof(ResponsePacketData.StartGame) },
-        { 1020, typeof(ResponsePacketData.StartRound) },
-        { 1022, typeof(ResponsePacketData.FirstRoundRules) },
-        { 1023, typeof(ResponsePacketData.YourCard) },
-        { 1103, typeof(ResponsePacketData.YourRank) },
-        { 1104, typeof(ResponsePacketData.YourOrder) },
-        { 1105, typeof(ResponsePacketData.RoundStarted) },
-        { 1106, typeof(ResponsePacketData.DealCards) },
-        { 1107, typeof(ResponsePacketData.ExchangePhase) },
-        { 1108, typeof(ResponsePacketData.ExchangeInfo) },
-        { 1109, typeof(ResponsePacketData.ExchangeInfo2) },
-        { 1111, typeof(ResponsePacketData.ExchangeDone) },
-        { 1112, typeof(ResponsePacketData.YourTurn) },
-        { 1115, typeof(ResponsePacketData.AllPassed) },
-        { 1116, typeof(ResponsePacketData.EndTurn) },
-        { 1028, typeof(ResponsePacketData.DoneRound) },
-        { 1030, typeof(ResponsePacketData.InvalidCard) }
+        { PACKET_TYPE.PING, typeof(ResponsePacketData.Pong) },
+        { PACKET_TYPE.ENTER_ROOM, typeof(ResponsePacketData.EnterRoom) },
+        { PACKET_TYPE.LEAVE_ROOM, typeof(ResponsePacketData.LeaveRoom) },
+        { PACKET_TYPE.PLAYER_COUNT_CHANGED, typeof(ResponsePacketData.PlayerCountChanged) },
+        { PACKET_TYPE.YOU_ARE_HOST, typeof(ResponsePacketData.YouAreHost) },
+        { PACKET_TYPE.READY_GAME, typeof(ResponsePacketData.ReadyGame) },
+        { PACKET_TYPE.START_GAME, typeof(ResponsePacketData.StartGame) },
+        { PACKET_TYPE.START_ROUND, typeof(ResponsePacketData.StartRound) },
+        { PACKET_TYPE.FIRST_ROUND_RULES, typeof(ResponsePacketData.FirstRoundRules) },
+        { PACKET_TYPE.SHUFFLE_CARDS, typeof(ResponsePacketData.YourCard) },
+        { PACKET_TYPE.YOUR_RANK, typeof(ResponsePacketData.YourRank) },
+        { PACKET_TYPE.YOUR_ORDER, typeof(ResponsePacketData.YourOrder) },
+        { PACKET_TYPE.ROUND_STARTED, typeof(ResponsePacketData.RoundStarted) },
+        { PACKET_TYPE.DEAL_CARDS, typeof(ResponsePacketData.DealCards) },
+        { PACKET_TYPE.EXCHANGE_PHASE, typeof(ResponsePacketData.ExchangePhase) },
+        { PACKET_TYPE.EXCHANGE_INFO, typeof(ResponsePacketData.ExchangeInfo) },
+        { PACKET_TYPE.EXCHANGE_INFO_2, typeof(ResponsePacketData.ExchangeInfo2) },
+        { PACKET_TYPE.EXCHANGE_DONE, typeof(ResponsePacketData.ExchangeDone) },
+        { PACKET_TYPE.YOUR_TURN, typeof(ResponsePacketData.YourTurn) },
+        { PACKET_TYPE.ALL_PASSED, typeof(ResponsePacketData.AllPassed) },
+        { PACKET_TYPE.END_TURN, typeof(ResponsePacketData.EndTurn) },
+        { PACKET_TYPE.DONE_ROUND, typeof(ResponsePacketData.DoneRound) },
+        { PACKET_TYPE.INVALID_CARD, typeof(ResponsePacketData.InvalidCard) }
         // ... 필요시 추가
     };
 
     private readonly Dictionary<Type, int> _requestSignals = new()
     {
-        { typeof(RequestPacketData.Ping), 1 },
-        { typeof(RequestPacketData.EnterRoom), 1001 },
-        { typeof(RequestPacketData.LeaveRoom), 1002 },
-        { typeof(RequestPacketData.GetRoomInfo), 1003 },
-        { typeof(RequestPacketData.StartGame), 1010 },
-        { typeof(RequestPacketData.ThrowSubmit), 1110 },
-        { typeof(RequestPacketData.PlayCard), 1024 },
-        { typeof(RequestPacketData.Pass), 1025 },
-        { typeof(RequestPacketData.DoneRound), 1028 }
+        { typeof(RequestPacketData.Ping), PACKET_TYPE.PING },
+        { typeof(RequestPacketData.EnterRoom), PACKET_TYPE.ENTER_ROOM },
+        { typeof(RequestPacketData.LeaveRoom), PACKET_TYPE.LEAVE_ROOM },
+        { typeof(RequestPacketData.GetRoomInfo), PACKET_TYPE.GET_ROOM_INFO },
+        { typeof(RequestPacketData.StartGame), PACKET_TYPE.START_GAME },
+        { typeof(RequestPacketData.ThrowSubmit), PACKET_TYPE.THROW_SUBMIT },
+        { typeof(RequestPacketData.PlayCard), PACKET_TYPE.PLAY_CARD },
+        { typeof(RequestPacketData.Pass), PACKET_TYPE.PASS },
+        { typeof(RequestPacketData.DoneRound), PACKET_TYPE.DONE_ROUND }
         // ... 필요시 추가
     };
 
