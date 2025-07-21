@@ -46,13 +46,17 @@ public class CardSubmitManager : MonoBehaviour
 
     public void ClearCenterPile()
     {
-        foreach (GameObject card in submittedCards)
+        // centerPile 아래 모든 자식 오브젝트 제거
+        foreach (Transform child in centerPile)
         {
-            CanvasGroup cg = card.GetComponent<CanvasGroup>();
-            if (cg == null) cg = card.AddComponent<CanvasGroup>();
-            cg.DOFade(0, 0.5f).OnComplete(() => Destroy(card));
-        }
+            CanvasGroup cg = child.GetComponent<CanvasGroup>();
+            if (cg == null) cg = child.gameObject.AddComponent<CanvasGroup>();
 
-        submittedCards.Clear();
+            cg.DOFade(0, 0.5f).OnComplete(() =>
+            {
+                Destroy(child.gameObject);
+            });
+        }
     }
+
 }

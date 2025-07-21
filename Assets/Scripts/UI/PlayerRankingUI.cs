@@ -82,10 +82,11 @@ public class PlayerRankingUI : MonoBehaviour
         {
             profileImage.transform.localScale = isActive ? Vector3.one * 1.3f : Vector3.one;
         }
-
-        if (outline != null)
+        var nicknameText = playerItem.transform.Find("InfoGroup/NicknameText")?.GetComponent<TMPro.TMP_Text>();
+        if (nicknameText != null)
         {
-            outline.effectColor = isActive ? Color.yellow : Color.clear;
+            nicknameText.color = isActive ? Color.yellow : Color.white;
+            nicknameText.fontSize = isActive ? 40 : 32; // 폰트 크기 조정 (원하는 값으로 조정 가능)
         }
     }
     public GameObject FindPlayerUIById(string playerId)

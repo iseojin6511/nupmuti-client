@@ -36,8 +36,8 @@ public class LobbyUI : MonoBehaviour
 
     private string GenerateRandomNickname()
     {
-        string[] adjectives = { "Fast", "Cool", "Smart", "Happy", "Dark", "Tiny" };
-        string[] nouns = { "Tiger", "Fox", "Panda", "Wolf", "Bear", "Cat" };
+        string[] adjectives = { "빠른", "멋진", "똑똑한", "행복한", "어두운", "작은" };
+        string[] nouns = { "호랑이", "여우", "판다", "늑대", "곰", "고양이" };
         int number = UnityEngine.Random.Range(0, 999);
         return $"{adjectives[UnityEngine.Random.Range(0, adjectives.Length)]}" +
                $"{nouns[UnityEngine.Random.Range(0, nouns.Length)]}{number:D3}";
