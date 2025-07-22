@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class GameManager : MonoBehaviour
     public UnityEngine.UI.Button passButton;
     [SerializeField] private GameObject cardPrefab;
 
-    //playerInfo를 받을 수 있는 response가 필요해요
+
 
     private void Start()
     {
@@ -31,7 +32,7 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourRank>(OnYourRank);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourOrder>(OnYourOrder);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed);
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.PlayerInfo>(OnPlayerInfo);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllInfo>(OnAllInfo);
         // ... 기타 필요한 핸들러 등록
     }
 
@@ -43,18 +44,23 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void OnPlayerInfo(ResponsePacketData.PlayerInfo data)
+    private void OnAllInfo(ResponsePacketData.AllInfo data)
     {
        //TODO: playerINFO 정보 띄우기 왼쪽 패널에 띄우기
-       List<PlayerInfo> playerInfos = new List<PlayerInfo>();
-       for (int i = 0; i < data.nicknames.Count; i++)
-       {
+        List<PlayerInfo> playerInfos = new List<PlayerInfo>();
+        for (int i = 0; i < data.nicknames.Count; i++)
+        {
         PlayerInfo playerInfo = new PlayerInfo();
         playerInfo.nickname = data.nicknames[i];
-        playerInfo.rank = data.ranks[i];
+        playerInfo.rank = data.order[i];
         playerInfo.cardValues = data.hands[i];
         playerInfos.Add(playerInfo);
-       }
+        }
+        playerInfos = playerInfos.OrderBy(p => p.rank).ToList();
+        playerIds = playerInfos.Select(p => p.nickname).ToList();
+        cardShuffler.playerIds = playerIds;
+        rankingUI.ShowRankings(playerInfos);
+
     }
 
     // 내 턴 신호가 오면 버튼 활성화
