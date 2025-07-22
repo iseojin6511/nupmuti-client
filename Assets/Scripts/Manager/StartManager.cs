@@ -20,6 +20,9 @@ public class StartManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourCard>(OnYourCard);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourRank>(OnYourRank);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourOrder>(OnYourOrder);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.ShuffleCards>(OnShuffleCards);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealOneCard>(OnDealOneCard);
+        // NetworkManager.Instance.RegisterHandler<ResponsePacketData.UpdateHand>(OnUpdateHand);
     }
 
     private void OnStartRound(ResponsePacketData.StartRound data)
@@ -35,6 +38,18 @@ public class StartManager : MonoBehaviour
     private void OnFirstRoundRules(ResponsePacketData.FirstRoundRules data)
     {
         Debug.Log("FirstRoundRules: " + data.message);
+        ShowMessage(data.message);
+    }
+
+    private void OnShuffleCards(ResponsePacketData.ShuffleCards data)
+    {
+        Debug.Log("ShuffleCards: " + data.message);
+        ShowMessage(data.message);
+    }
+
+    private void OnDealOneCard(ResponsePacketData.DealOneCard data)
+    {
+        Debug.Log("DealOneCard: " + data.message);
         ShowMessage(data.message);
     }
 
