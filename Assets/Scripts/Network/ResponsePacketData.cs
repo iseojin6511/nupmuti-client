@@ -49,7 +49,7 @@ public abstract record ResponsePacketData
     public sealed record YourOrder(int order, string message) : ResponsePacketData;
 
     // 라운드 시작 알림
-    public sealed record RoundStarted(bool success) : ResponsePacketData;
+    public sealed record RoundStarted(bool success, string message, string nickname) : ResponsePacketData;
 
     // 카드 분배
     public sealed record DealCards(string message) : ResponsePacketData;

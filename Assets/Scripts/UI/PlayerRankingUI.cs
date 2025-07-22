@@ -22,6 +22,7 @@ public class PlayerRankingUI : MonoBehaviour
 
         for (int i = 0; i < allPlayers.Count; i++)
         {
+            Debug.Log($"[ShowRankings] Player {i}: {allPlayers[i].nickname}");
             var p = allPlayers[i];
 
             GameObject item = Instantiate(playerProfilePrefab, playerListPanel, false);

@@ -38,7 +38,22 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.DoneRound>(OnDoneRound); // 1028
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPlayerCardPlayed); // 1029
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.HasPassed>(OnHasPassed); // 1030
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.UpdateHand>(OnUpdateHand); // 1112
         // ... 기타 필요한 핸들러 등록
+    }
+
+    private void OnRoundStarted(ResponsePacketData.RoundStarted data)
+    {
+        Debug.Log("RoundStarted: " + data.message);
+        playerActionUI.ShowMessage(data.message);
+        myPlayerId = data.nickname;
+        cardSpawner.SetLocalPlayerId(myPlayerId);
+        cardShuffler.CreateCardPile();
+    }
+
+    private void OnUpdateHand(ResponsePacketData.UpdateHand data)
+    {
+        //
     }
 
     private void OnAllInfo(ResponsePacketData.AllInfo data)

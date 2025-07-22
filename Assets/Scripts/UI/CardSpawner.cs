@@ -31,7 +31,7 @@ public class CardSpawner : MonoBehaviour
     {
         if (string.IsNullOrEmpty(localPlayerId))
         {
-            Debug.LogError("localPlayerId is not set!");
+            Debug.Log("localPlayerId is not set!");
             return;
         }
 
