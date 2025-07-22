@@ -39,6 +39,7 @@ public class StartManager : MonoBehaviour
 
     private void OnYourCard(ResponsePacketData.YourCard data)
     {
+        Debug.Log("MyNUM", data.cardNum);
         // 1. 뒷면 카드 생성 (cardPrefab은 뒷면 프리팹이어야 함)
         GameObject backCard = Instantiate(cardSpawner.cardBackPrefab, HandArea);
         RectTransform backRT = backCard.GetComponent<RectTransform>();
