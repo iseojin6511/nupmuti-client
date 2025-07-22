@@ -44,15 +44,15 @@ public class GameManager : MonoBehaviour
 
     private void OnAllInfo(ResponsePacketData.AllInfo data)
     {
-       //TODO: playerINFO 정보 띄우기 왼쪽 패널에 띄우기
+        //TODO: playerINFO 정보 띄우기 왼쪽 패널에 띄우기
         List<PlayerInfo> playerInfos = new List<PlayerInfo>();
         for (int i = 0; i < data.nicknames.Count; i++)
         {
-        PlayerInfo playerInfo = new PlayerInfo();
-        playerInfo.nickname = data.nicknames[i];
-        playerInfo.rank = data.order[i];
-        playerInfo.cardValues = data.hands[i];
-        playerInfos.Add(playerInfo);
+            PlayerInfo playerInfo = new PlayerInfo();
+            playerInfo.nickname = data.nicknames[i];
+            playerInfo.rank = data.order[i];
+            playerInfo.cardValues = data.hands[i];
+            playerInfos.Add(playerInfo);
         }
         playerInfos = playerInfos.OrderBy(p => p.rank).ToList();
         playerIds = playerInfos.Select(p => p.nickname).ToList();
@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
     private void OnDealCards(ResponsePacketData.DealCards data)
     {
         playerActionUI.ShowMessage(data.message);
-        
+
         // 카드 분배 UI/상태 갱신 (data 구조에 맞게 구현)
     }
     // 서버에서 상대방 카드 제출 브로드캐스트 신호가 오면 UI 갱신
@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
     {
         playerActionUI.ShowMessage(data.message);
         submitManager.ClearCenterPile();
- // 연출 후 약간 대기
+        // 연출 후 약간 대기
         passedPlayers.Clear();
         // 센터 카드 정리 등
     }
@@ -143,8 +143,8 @@ public class GameManager : MonoBehaviour
 
         if (passedPlayers.Count == playerIds.Count - 1)
         {
-            
-            return; 
+
+            return;
         }
 
         ProceedTurnUI();
@@ -156,6 +156,8 @@ public class GameManager : MonoBehaviour
         playerActionUI.ShowMessage($"'{currentPlayerId}' Turn!");
         rankingUI.HighlightCurrentPlayer(currentPlayerId);
     }
+    
+    
 
 
 }

@@ -54,7 +54,7 @@ public class WaitingManager : MonoBehaviour
         
         if (data.success)
         {
-            //SceneManager.LoadScene("LobbyScene");
+            SceneManager.LoadScene("LobbyScene");
         }
     }
 

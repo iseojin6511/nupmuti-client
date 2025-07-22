@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.SceneManagement; 
 
 public class StartManager : MonoBehaviour
 {
@@ -39,24 +40,27 @@ public class StartManager : MonoBehaviour
 
     private void OnYourCard(ResponsePacketData.YourCard data)
     {
-        Debug.Log("MyNUM", data.cardNum);
-        // 1. 뒷면 카드 생성 (cardPrefab은 뒷면 프리팹이어야 함)
+        // 1. 뒷면 카드 생성 (시작 위치는 HandArea 위쪽)
         GameObject backCard = Instantiate(cardSpawner.cardBackPrefab, HandArea);
         RectTransform backRT = backCard.GetComponent<RectTransform>();
         backRT.localScale = Vector3.one;
-        backRT.anchoredPosition = Vector2.zero;
+        backRT.anchoredPosition = new Vector2(0, 500); // 위에서 시작 (500은 예시, 필요시 조정)
         backRT.localRotation = Quaternion.identity;
 
-        // 2. 0.5초 후에 뒤집기 연출 시작
+        // 2. HandArea 위치로 이동
         Sequence seq = DOTween.Sequence();
+        seq.Append(backRT.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutCubic)); // 0.5초 동안 이동
+
+        // 3. 도착 후 0.5초 대기
         seq.AppendInterval(0.5f);
-        // 3. 뒷면 Y축 0 → 90도 (절반 뒤집기)
+
+        // 4. 뒷면 Y축 0 → 90도 (절반 뒤집기)
         seq.Append(backRT.DOLocalRotate(new Vector3(0, 90, 0), 0.3f).SetEase(Ease.InCubic));
-        // 4. 뒷면 제거 & 앞면 카드 생성
+
+        // 5. 뒷면 제거 & 앞면 카드 생성
         seq.AppendCallback(() =>
         {
             Destroy(backCard);
-            // 앞면 카드 생성 (cardSpawner.cardFrontPrefab이 앞면 프리팹이어야 함)
             GameObject frontCard = Instantiate(cardSpawner.cardFrontPrefab, HandArea);
             RectTransform frontRT = frontCard.GetComponent<RectTransform>();
             frontRT.localScale = Vector3.one;
@@ -65,9 +69,9 @@ public class StartManager : MonoBehaviour
             CardUI cardUI = frontCard.GetComponent<CardUI>();
             if (cardUI != null)
             {
-                cardUI.SetCard(data.cardNum);
+                cardUI.SetCard(data.cardNumber);
             }
-            // 5. 앞면 Y축 -90 → 0도 (완전히 뒤집힘)
+            // 6. 앞면 Y축 -90 → 0도 (완전히 뒤집힘)
             frontRT.DOLocalRotate(Vector3.zero, 0.3f).SetEase(Ease.OutCubic);
         });
     }
