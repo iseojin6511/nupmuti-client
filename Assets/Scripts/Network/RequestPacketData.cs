@@ -16,7 +16,7 @@ public abstract record RequestPacketData
     public sealed record GetRoomInfo(string clientId) : RequestPacketData;
 
     // 방 생성
-    public sealed record CreateRoom(string clientId) : RequestPacketData;
+    public sealed record CreateRoom(string nickname) : RequestPacketData;
 
     // 라운드 시작
     public sealed record RoundStarted(string clientID): RequestPacketData;

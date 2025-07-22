@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
 
     private void OnAllInfo(ResponsePacketData.AllInfo data)
     {
+        Debug.Log("OnAllInfo");
         //TODO: playerINFO 정보 띄우기 왼쪽 패널에 띄우기
         List<PlayerInfo> playerInfos = new List<PlayerInfo>();
         for (int i = 0; i < data.nicknames.Count; i++)

@@ -104,7 +104,6 @@ public class StartManager : MonoBehaviour
         ShowMessage(data.message);
         var req = new RequestPacketData.RoundStarted(PlayerSession.ClientId);
         NetworkManager.Instance.Send(req);
-        SceneManager.LoadScene("MainGame");
     }
 
     private void OnRoundStarted(ResponsePacketData.RoundStarted data)
