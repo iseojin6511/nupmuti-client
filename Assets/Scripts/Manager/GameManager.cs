@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // 서버 응답(신호)에 맞는 핸들러 등록
-        // NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourTurn>(OnYourTurn);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourTurn>(OnYourTurn);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.InvalidCard>(OnInvalidCard);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealCards>(OnDealCards);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed);
@@ -40,6 +40,8 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPileUpdate); // 1029  -> nickname + 센터에 제출된 카드 목록
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.HasPassed>(OnHasPassed); // 1030
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.UpdateHand>(OnUpdateHand); // 1112 ->  내 카드 목록 
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.ExchangeDone>(OnExchangeDone); // 1113
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.SubmitError>(OnSubmitError); // 1112
         // ... 기타 필요한 핸들러 등록
     }
 
@@ -86,7 +88,7 @@ public class GameManager : MonoBehaviour
     {
         submitButton.interactable = true;
         passButton.interactable = true;
-        playerActionUI.ShowMessage(data.message ?? "당신의 턴입니다!");
+        playerActionUI.ShowMessage(data.message);
     }
 
     private void OnExchangePhase(ResponsePacketData.ExchangePhase data)
@@ -103,11 +105,13 @@ public class GameManager : MonoBehaviour
     {
         if (data.nubjukOrLkh) {
             //넙죽이와 이광형에게 버릴 카드 제출 버튼 띄워주기
-
             throwButton.gameObject.SetActive(true);
             throwButton.interactable = true;
             throwButton.onClick.AddListener(OnClickThrow);
-
+        } else {
+            throwButton.gameObject.SetActive(false);
+            throwButton.interactable = false;
+            throwButton.onClick.RemoveListener(OnClickThrow);
         }
     }
 
@@ -119,6 +123,20 @@ public class GameManager : MonoBehaviour
         throwButton.interactable = false;
         throwButton.gameObject.SetActive(false);
         
+    }
+
+    public void OnExchangeDone(ResponsePacketData.ExchangeDone data) {
+        Debug.Log("OnExchangeDone");
+        playerActionUI.ShowMessage(data.message);
+        submitButton.interactable = true;
+        Debug.Log("submitButton.interactable");
+        passButton.interactable = true;
+        submitManager.ClearCenterPile();
+    }
+
+    public void OnSubmitError(ResponsePacketData.SubmitError data) {
+        Debug.Log("OnSubmitError");
+        playerActionUI.ShowMessage(data.message);
     }
     
     
@@ -135,7 +153,9 @@ public class GameManager : MonoBehaviour
     // 카드 제출 버튼 클릭 시 서버에 제출 요청
     public void OnClickSubmit()
     {
+        Debug.Log("OnClickSubmit 진입");
         if (!submitButton.interactable) return;
+        Debug.Log("submitButton.interactable 확인");
         var cards = submitManager.OnSubmit();
         var req = new RequestPacketData.PlayCard(cards);
         NetworkManager.Instance.Send(req);

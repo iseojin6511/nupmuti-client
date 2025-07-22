@@ -147,6 +147,7 @@ public class NetworkManager : MonoBehaviour
         { 1030, typeof(ResponsePacketData.InvalidCard) },
         { 1031, typeof(ResponsePacketData.AllInfo) },
         { 1032, typeof(ResponsePacketData.NextPage) },
+        { 1033, typeof(ResponsePacketData.SubmitError) },
         // ... 필요시 추가
     };
 

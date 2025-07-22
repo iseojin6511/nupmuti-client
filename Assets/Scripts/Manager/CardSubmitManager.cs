@@ -19,9 +19,10 @@ public class CardSubmitManager : MonoBehaviour
         foreach (Transform cardTransform in handArea)
         {
             var cardUI = cardTransform.GetComponent<CardUI>();
-            if (cardUI != null && cardUI.IsSelected())
+            if (cardUI != null && cardUI.IsSelected()){
                 selectedCards.Add(cardTransform.gameObject);
-            submittedValues.Add(cardUI.cardValue);
+                submittedValues.Add(cardUI.cardValue);
+            }
         }
 
         float baseOffset = -(selectedCards.Count - 1) * cardSpacing * 0.5f;
