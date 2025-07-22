@@ -158,9 +158,11 @@ public class NetworkManager : MonoBehaviour
         { typeof(RequestPacketData.RoundStarted),1105},
         { typeof(RequestPacketData.StartGame), 1010 },
         { typeof(RequestPacketData.ThrowSubmit), 1110 },
-        { typeof(RequestPacketData.PlayCard), 1024 },
-        { typeof(RequestPacketData.Pass), 1025 },
-        { typeof(RequestPacketData.DoneRound), 1028 }
+        { typeof(RequestPacketData.PlayCard), 1113 },
+        { typeof(RequestPacketData.Pass), 1114 },
+        { typeof(RequestPacketData.DoneRound), 1028 },
+        { typeof(RequestPacketData.AllInfo), 1031 },
+
         // ... 필요시 추가
     };
 

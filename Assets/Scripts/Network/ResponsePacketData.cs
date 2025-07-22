@@ -12,6 +12,9 @@ public abstract record ResponsePacketData
     // 방 퇴장 응답
     public sealed record LeaveRoom(bool success) : ResponsePacketData;
 
+    // 방 생성 응답
+    public sealed record CreateRoom(bool success) : ResponsePacketData;
+
     // 방 인원 변화
     public sealed record PlayerCountChanged(int participantCount, int maxPlayer) : ResponsePacketData;
 
@@ -36,9 +39,6 @@ public abstract record ResponsePacketData
     // 카드 한 장씩 분배
     public sealed record DealOneCard(string message) : ResponsePacketData;
 
-    // 패 업데이트
-    public sealed record UpdateHand(string message) : ResponsePacketData;
-
     // 내 카드 정보
     public sealed record YourCard(int cardNumber, string cardName, string message) : ResponsePacketData;
 
@@ -49,7 +49,7 @@ public abstract record ResponsePacketData
     public sealed record YourOrder(int order, string message) : ResponsePacketData;
 
     // 라운드 시작 알림
-    public sealed record RoundStarted(int round, string message) : ResponsePacketData;
+    public sealed record RoundStarted(bool success) : ResponsePacketData;
 
     // 카드 분배
     public sealed record DealCards(string message) : ResponsePacketData;
@@ -69,6 +69,12 @@ public abstract record ResponsePacketData
     // 내 턴 알림
     public sealed record YourTurn(string message) : ResponsePacketData;
 
+    // 카드 더미 업데이트
+    public sealed record PileUpdate(string playerId, List<int> cards) : ResponsePacketData;
+
+    // 패스 여부
+    public sealed record HasPassed(string message) : ResponsePacketData;
+
     // 모두 패스
     public sealed record AllPassed(string message) : ResponsePacketData;
 
@@ -81,12 +87,10 @@ public abstract record ResponsePacketData
     // 잘못된 카드 제출
     public sealed record InvalidCard(string message) : ResponsePacketData;
 
-    public sealed record PileUpdate(string playerId, List<int> cards) : ResponsePacketData;
-
-    public sealed record CreateRoom(bool success) : ResponsePacketData;
-
-    public sealed record HasPassed(string message) : ResponsePacketData;
-
+    // 모든 정보
     public sealed record AllInfo(List<string> nicknames, List<List<int>> hands , List<string> ranks, List<int> order) : ResponsePacketData;
+
+    // 패 업데이트
+    public sealed record UpdateHand(List<int> hand) : ResponsePacketData;
 
 }

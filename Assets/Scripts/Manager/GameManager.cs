@@ -23,23 +23,22 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // 서버 응답(신호)에 맞는 핸들러 등록
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.RoundStarted>(OnRoundStarted);
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourTurn>(OnYourTurn);
+        // NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourTurn>(OnYourTurn);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.InvalidCard>(OnInvalidCard);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPlayerCardPlayed);
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.HasPassed>(OnPlayerPassed);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealCards>(OnDealCards);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllInfo>(OnAllInfo);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealCards>(OnDealCards); // 1106
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.ExchangePhase>(OnExchangePhase); // 1107
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.ExchangeInfo>(OnExchangeInfo); // 1108
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.ExchangeInfo2>(OnExchangeInfo2); // 1109
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed); // 1115
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.EndTurn>(OnEndTurn); // 1116
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.DoneRound>(OnDoneRound); // 1028
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPlayerCardPlayed); // 1029
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.HasPassed>(OnHasPassed); // 1030
         // ... 기타 필요한 핸들러 등록
-    }
-
-    private void OnRoundStarted(ResponsePacketData.RoundStarted data)
-    {
-        Debug.Log("StartRound: " + data.message);
-        playerActionUI.ShowMessage(data.message);
-        cardShuffler.CreateCardPile();
-
     }
 
     private void OnAllInfo(ResponsePacketData.AllInfo data)
@@ -69,12 +68,40 @@ public class GameManager : MonoBehaviour
         playerActionUI.ShowMessage(data.message ?? "당신의 턴입니다!");
     }
 
+    private void OnExchangePhase(ResponsePacketData.ExchangePhase data)
+    {
+        playerActionUI.ShowMessage(data.message);
+    }
+    
+    private void OnExchangeInfo(ResponsePacketData.ExchangeInfo data)
+    {
+        playerActionUI.ShowMessage(data.message);
+    }
+    
+    private void OnExchangeInfo2(ResponsePacketData.ExchangeInfo2 data)
+    {
+        if (data.nubjukOrLkh) {
+            //넙죽이와 이광형에게 버릴 카드 제출 버튼 띄워주기
+        }
+    }
+    
+    
+    // private void OnAllPassed(ResponsePacketData.AllPassed data)
+    // {
+    //     playerActionUI.ShowMessage(data.message);
+    // }
+
+    // private void OnPlayerCardPlayed(ResponsePacketData.PileUpdate data)
+    // {
+    //     playerActionUI.PlayCardFromPlayer(data.nickname, data.cards);
+    // }
+
     // 카드 제출 버튼 클릭 시 서버에 제출 요청
     public void OnClickSubmit()
     {
         if (!submitButton.interactable) return;
-        var selectedCards = submitManager.OnSubmit();
-        var req = new RequestPacketData.ThrowSubmit(PlayerSession.ClientId, selectedCards);
+        var cards = submitManager.OnSubmit();
+        var req = new RequestPacketData.PlayCard(cards);
         NetworkManager.Instance.Send(req);
         List<int> submittedValues = submitManager.OnSubmit();
         submitButton.interactable = false;
@@ -120,6 +147,22 @@ public class GameManager : MonoBehaviour
     {
         playerActionUI.ShowMessage(data.message);
         NextTurn();
+    }
+
+    private void OnEndTurn(ResponsePacketData.EndTurn data)
+    {        
+        submitButton.interactable = false;
+        passButton.interactable = false;
+    }
+
+    private void OnDoneRound(ResponsePacketData.DoneRound data)
+    {
+        playerActionUI.ShowMessage(data.message);
+    }
+
+    private void OnHasPassed(ResponsePacketData.HasPassed data)
+    {
+        playerActionUI.ShowMessage(data.message);
     }
 
     // 서버에서 모두 패스 신호가 오면 센터 카드 정리 등 UI 갱신
