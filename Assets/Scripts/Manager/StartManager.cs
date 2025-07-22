@@ -11,7 +11,7 @@ public class StartManager : MonoBehaviour
     void Start()
     {
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.FirstRoundRules>(OnFirstRoundRules);
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourRank>(OnYourRank);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourCard>(OnYourCard);
     }
 
     private void OnFirstRoundRules(ResponsePacketData.FirstRoundRules data)
@@ -23,23 +23,8 @@ public class StartManager : MonoBehaviour
         }
     }
 
-    private void OnYourRank(ResponsePacketData.YourRank data)
+    private void OnYourCard(ResponsePacketData.YourCard data)
     {
-        // data.number가 카드 값이라고 가정
-        if (cardSpawner != null && cardSpawner.cardFrontPrefab != null && cardSpawner.myHandArea != null)
-        {
-            GameObject card = Instantiate(cardSpawner.cardFrontPrefab, cardSpawner.myHandArea);
-            RectTransform cardRT = card.GetComponent<RectTransform>();
-            cardRT.localScale = Vector3.one;
-            cardRT.anchoredPosition = Vector2.zero;
-            cardRT.localRotation = Quaternion.identity;
-            CardUI cardUI = card.GetComponent<CardUI>();
-            if (cardUI != null)
-            {
-                cardUI.SetCard(data.rank); // number가 카드 값
-            }
-
-        }
-
+       
     }
 }

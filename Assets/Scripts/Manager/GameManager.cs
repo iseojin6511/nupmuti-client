@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
     public List<string> playerIds;
     public int currentTurnIndex;
     public string myPlayerId;
+    private HashSet<string> passedPlayers = new();
     public CardSpawner cardSpawner;
     public CardSubmitManager submitManager;
     public PlayerRankingUI rankingUI;
@@ -34,7 +35,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("StartRound: " + data.message);
         playerActionUI.ShowMessage(data.message);
-        cardSpawner.CreateCardPile();
+        cardShuffler.CreateCardPile();
 
     }
 
@@ -117,8 +118,7 @@ public class GameManager : MonoBehaviour
     {
         playerActionUI.ShowMessage(data.message);
         submitManager.ClearCenterPile();
-
-        yield return new WaitForSeconds(1.0f);  // 연출 후 약간 대기
+ // 연출 후 약간 대기
         passedPlayers.Clear();
         // 센터 카드 정리 등
     }
