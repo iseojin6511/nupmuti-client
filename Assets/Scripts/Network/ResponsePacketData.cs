@@ -30,6 +30,15 @@ public abstract record ResponsePacketData
     // 첫 라운드 규칙
     public sealed record FirstRoundRules(string message) : ResponsePacketData;
 
+    // 카드 섞기
+    public sealed record ShuffleCards(string message) : ResponsePacketData;
+
+    // 카드 한 장씩 분배
+    public sealed record DealOneCard(string message) : ResponsePacketData;
+
+    // 패 업데이트
+    public sealed record UpdateHand(string message) : ResponsePacketData;
+
     // 내 카드 정보
     public sealed record YourCard(int cardNumber, string cardName, string message) : ResponsePacketData;
 

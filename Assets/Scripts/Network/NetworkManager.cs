@@ -127,7 +127,9 @@ public class NetworkManager : MonoBehaviour
         { 1010, typeof(ResponsePacketData.StartGame) },
         { 1020, typeof(ResponsePacketData.StartRound) },
         { 1022, typeof(ResponsePacketData.FirstRoundRules) },
-        
+        { 1023, typeof(ResponsePacketData.ShuffleCards) },
+        { 1024, typeof(ResponsePacketData.DealOneCard) },
+        { 1025, typeof(ResponsePacketData.UpdateHand) },
         { 1026, typeof(ResponsePacketData.YourCard) },
         { 1103, typeof(ResponsePacketData.YourRank) },
         { 1104, typeof(ResponsePacketData.YourOrder) },
