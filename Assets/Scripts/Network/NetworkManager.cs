@@ -152,6 +152,7 @@ public class NetworkManager : MonoBehaviour
         { typeof(RequestPacketData.LeaveRoom), 1002 },  
         { typeof(RequestPacketData.GetRoomInfo), 1003 },
         { typeof(RequestPacketData.CreateRoom), 1004 },
+        { typeof(RequestPacketData.RoundStarted),1105},
         { typeof(RequestPacketData.StartGame), 1010 },
         { typeof(RequestPacketData.ThrowSubmit), 1110 },
         { typeof(RequestPacketData.PlayCard), 1024 },

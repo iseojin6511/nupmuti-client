@@ -29,8 +29,6 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPlayerCardPlayed);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.HasPassed>(OnPlayerPassed);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealCards>(OnDealCards);
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourRank>(OnYourRank);
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourOrder>(OnYourOrder);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllInfo>(OnAllInfo);
         // ... 기타 필요한 핸들러 등록
@@ -92,6 +90,7 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.Send(req);
         submitButton.interactable = false;
         passButton.interactable = false;
+        NextTurn();
     }
 
     // 서버에서 카드 제출이 유효하지 않다는 신호가 오면 안내 및 재시도
@@ -109,25 +108,11 @@ public class GameManager : MonoBehaviour
         
         // 카드 분배 UI/상태 갱신 (data 구조에 맞게 구현)
     }
-
-    // 서버에서 내 랭크 정보 신호가 오면 UI 갱신
-    private void OnYourRank(ResponsePacketData.YourRank data)
-    {
-        //rankingUI.SetMyRank(data.rank);
-        playerActionUI.ShowMessage(data.message);
-    }
-
-    // 서버에서 내 순서 정보 신호가 오면 UI 갱신
-    private void OnYourOrder(ResponsePacketData.YourOrder data)
-    {
-        playerActionUI.ShowMessage(data.message);
-        // 순서 관련 UI 갱신
-    }
-
     // 서버에서 상대방 카드 제출 브로드캐스트 신호가 오면 UI 갱신
     private void OnPlayerCardPlayed(ResponsePacketData.PileUpdate data)
     {
         playerActionUI.PlayCardFromPlayer(data.playerId, data.cards);
+        NextTurn();
     }
 
     // 서버에서 상대방 패스 브로드캐스트 신호가 오면 UI 갱신

@@ -81,9 +81,10 @@ public class StartManager : MonoBehaviour
     {
         Debug.Log("YourOrder: " + data.order);
         ShowMessage(data.message);
+        var req = new RequestPacketData.RoundStarted(PlayerSession.ClientId);
+        NetworkManager.Instance.Send(req);
+        SceneManager.LoadScene("MainGame");
     }
-    
-
     public void ShowMessage(string message)
     {
         messageText.text = $"{message}";

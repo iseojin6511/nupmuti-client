@@ -32,4 +32,6 @@ public abstract record RequestPacketData
 
     // 라운드 종료
     public sealed record DoneRound(string clientId) : RequestPacketData;
+
+    public sealed record RoundStarted(string clientID): RequestPacketData;
 }
