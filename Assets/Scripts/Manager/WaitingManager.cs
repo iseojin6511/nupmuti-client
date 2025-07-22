@@ -15,6 +15,7 @@ public class WaitingManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.PlayerCountChanged>(OnPlayerCountChanged);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.LeaveRoom>(OnLeaveRoom);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YouAreHost>(OnYouAreHost);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.StartGame>(OnStartGame);
         startGameButton.gameObject.SetActive(false); // 기본적으로 숨김
         // 최초 입장 시 방 정보 요청 (예시)
         var req = new RequestPacketData.GetRoomInfo(PlayerSession.ClientId);
@@ -33,6 +34,11 @@ public class WaitingManager : MonoBehaviour
         if (data.isHost) {
             startGameButton.gameObject.SetActive(true); // 방장만 버튼 보임
         }
+    }
+
+    private void OnStartGame(ResponsePacketData.StartGame data)
+    {
+        SceneManager.LoadScene("StartGame");
     }
 
 
@@ -76,7 +82,6 @@ public class WaitingManager : MonoBehaviour
     {
         // 게임 시작 요청 패킷 전송
         NetworkManager.Instance.Send(new RequestPacketData.StartGame());
-        SceneManager.LoadScene("StartGame");
     }
 
 
