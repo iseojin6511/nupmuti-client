@@ -48,6 +48,9 @@ public abstract record ResponsePacketData
     // 내 차례 순서
     public sealed record YourOrder(int order, string message) : ResponsePacketData;
 
+    // 다음 페이지 UI
+    public sealed record NextPage(bool success) : ResponsePacketData;
+
     // 라운드 시작 알림
     public sealed record RoundStarted(bool success, string message, string nickname) : ResponsePacketData;
 

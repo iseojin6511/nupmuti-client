@@ -22,7 +22,8 @@ public class StartManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourOrder>(OnYourOrder);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.ShuffleCards>(OnShuffleCards);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealOneCard>(OnDealOneCard);
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.RoundStarted>(OnRoundStarted);
+        // NetworkManager.Instance.RegisterHandler<ResponsePacketData.RoundStarted>(OnRoundStarted);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.NextPage>(OnNextPage);
         // NetworkManager.Instance.RegisterHandler<ResponsePacketData.UpdateHand>(OnUpdateHand);
     }
 
@@ -106,13 +107,20 @@ public class StartManager : MonoBehaviour
         NetworkManager.Instance.Send(req);
     }
 
-    private void OnRoundStarted(ResponsePacketData.RoundStarted data)
+    private void OnNextPage(ResponsePacketData.NextPage data)
     {
-        Debug.Log("RoundStarted: " + data.success);
         if (data.success) {
             SceneManager.LoadScene("MainGame");
         }
     }
+
+    // private void OnRoundStarted(ResponsePacketData.RoundStarted data)
+    // {
+    //     Debug.Log("RoundStarted: " + data.success);
+    //     if (data.success) {
+    //         SceneManager.LoadScene("MainGame");
+    //     }
+    // }
     
     public void ShowMessage(string message)
     {
