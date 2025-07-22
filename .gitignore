@@ -19,6 +19,7 @@ MemoryCaptures/
 *.suo
 *.tmp
 *.userprefs
+*.app
 
 # OS 무시 파일
 .DS_Store

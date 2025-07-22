@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public PlayerActionUI playerActionUI;
     public UnityEngine.UI.Button submitButton;
     public UnityEngine.UI.Button passButton;
+    public UnityEngine.UI.Button throwButton;
     [SerializeField] private GameObject cardPrefab;
 
 
@@ -25,7 +26,6 @@ public class GameManager : MonoBehaviour
         // 서버 응답(신호)에 맞는 핸들러 등록
         // NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourTurn>(OnYourTurn);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.InvalidCard>(OnInvalidCard);
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPlayerCardPlayed);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealCards>(OnDealCards);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllInfo>(OnAllInfo);
@@ -37,9 +37,9 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed); // 1115
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.EndTurn>(OnEndTurn); // 1116
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.DoneRound>(OnDoneRound); // 1028
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPlayerCardPlayed); // 1029
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPileUpdate); // 1029  -> nickname + 센터에 제출된 카드 목록
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.HasPassed>(OnHasPassed); // 1030
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.UpdateHand>(OnUpdateHand); // 1112
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.UpdateHand>(OnUpdateHand); // 1112 ->  내 카드 목록 
         // ... 기타 필요한 핸들러 등록
     }
 
@@ -52,9 +52,9 @@ public class GameManager : MonoBehaviour
         //cardShuffler.CreateCardPile();
     }
 
-    private void OnUpdateHand(ResponsePacketData.UpdateHand data)
+    private void OnUpdateHand(ResponsePacketData.UpdateHand data) // card
     {
-//
+        cardSpawner.ShowHand(data.hand);
     }
 
     private void OnAllInfo(ResponsePacketData.AllInfo data)
@@ -73,12 +73,14 @@ public class GameManager : MonoBehaviour
         playerInfos = playerInfos.OrderBy(p => p.rank).ToList();
         playerIds = playerInfos.Select(p => p.nickname).ToList();
         cardShuffler.playerIds = playerIds;
+        var myInfo = playerInfos.FirstOrDefault(p => p.nickname == myPlayerId); 
+        cardSpawner.SetCardValues(myInfo.cardValues);
         rankingUI.ShowRankings(playerInfos);
         cardSpawner.SetLocalPlayerId(myPlayerId);
+        Debug.Log("StartDealing");
+        cardSpawner.StartDealing(playerIds);
         UpdateTurnUI();
-
     }
-
     // 내 턴 신호가 오면 버튼 활성화
     private void OnYourTurn(ResponsePacketData.YourTurn data)
     {
@@ -101,7 +103,22 @@ public class GameManager : MonoBehaviour
     {
         if (data.nubjukOrLkh) {
             //넙죽이와 이광형에게 버릴 카드 제출 버튼 띄워주기
+
+            throwButton.gameObject.SetActive(true);
+            throwButton.interactable = true;
+            throwButton.onClick.AddListener(OnClickThrow);
+
         }
+    }
+
+    public void OnClickThrow(){
+        if (!throwButton.interactable) return;
+        var cards = submitManager.OnSubmit();
+        var req = new RequestPacketData.ThrowSubmit(myPlayerId, cards);
+        NetworkManager.Instance.Send(req);
+        throwButton.interactable = false;
+        throwButton.gameObject.SetActive(false);
+        
     }
     
     
@@ -155,10 +172,11 @@ public class GameManager : MonoBehaviour
         // 카드 분배 UI/상태 갱신 (data 구조에 맞게 구현)
     }
     // 서버에서 상대방 카드 제출 브로드캐스트 신호가 오면 UI 갱신
-    private void OnPlayerCardPlayed(ResponsePacketData.PileUpdate data)
+    private void OnPileUpdate(ResponsePacketData.PileUpdate data) // nickname, card 
     {
+        Debug.Log("OnPileUpdate: " + data.playerId + " " + data.cards);
         playerActionUI.PlayCardFromPlayer(data.playerId, data.cards);
-        NextTurn();
+        playerActionUI.ShowMessage($"{data.cards[0]} {data.cards.Count}장");
     }
 
     // 서버에서 상대방 패스 브로드캐스트 신호가 오면 UI 갱신

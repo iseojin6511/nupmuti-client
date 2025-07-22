@@ -61,7 +61,6 @@ public class PlayerRankingUI : MonoBehaviour
             }
         }
     }
-
     public void HighlightCurrentPlayer(string currentPlayerId)
     {
         foreach (var item in playerItems)
@@ -99,6 +98,23 @@ public class PlayerRankingUI : MonoBehaviour
                 return item;
         }
         return null;
+    }
+
+    public void UpdatePlayerCardsLeft(string playerId, int cardsLeft)
+    {
+        foreach (var item in playerItems)
+        {
+            var nameText = item.transform.Find("InfoGroup/NicknameText")?.GetComponent<TMP_Text>();
+            if (nameText != null && nameText.text == playerId)
+            {
+                var scoreText = item.transform.Find("InfoGroup/ScoreGroup/CardLeft")?.GetComponent<TMP_Text>();
+                if (scoreText != null)
+                {
+                    scoreText.text = $"x{cardsLeft}";
+                }
+                break;
+            }
+        }
     }
 }
 

@@ -13,7 +13,7 @@ public class CardSpawner : MonoBehaviour
     public PlayerRankingUI playerRankingUI;
 
     private string localPlayerId;
-    public List<int> cardValues;
+    [SerializeField] private List<int> cardValues;
 
     public float radius = 350f;
     public float angleRange = 140f;
@@ -26,6 +26,10 @@ public class CardSpawner : MonoBehaviour
     {
         localPlayerId = playerId;
     }
+    public void SetCardValues(List<int> values)
+    {
+        cardValues = values;
+    }
 
     public void StartDealing(List<string> playerIds)
     {
@@ -36,6 +40,38 @@ public class CardSpawner : MonoBehaviour
         }
 
         StartCoroutine(DealCardsToPlayers(playerIds));
+    }
+
+    public void ShowHand(List<int> hand)
+    {
+        // 기존 패 비우기
+        foreach (Transform child in myHandArea)
+        {
+            Destroy(child.gameObject);
+        }
+
+        int myCardCount = hand.Count;
+        for (int i = 0; i < myCardCount; i++)
+        {
+            // 아치형 위치 계산
+            float t = Mathf.InverseLerp(3, 10, myCardCount);
+            float angleR = Mathf.Lerp(minAngleRange, angleRange, t);
+            float angleStep = (myCardCount > 1) ? angleR / (myCardCount - 1) : 0;
+            float startAngle = -angleR / 2f;
+            float angle = startAngle + i * angleStep;
+            float rad = angle * Mathf.Deg2Rad;
+
+            Vector2 finalPos = new Vector2(Mathf.Sin(rad) * radius, Mathf.Cos(rad) * curveHeight + offsetY);
+            Quaternion finalRot = Quaternion.Euler(0, 0, -angle * rotationFactor);
+
+            // 카드 앞면 생성
+            GameObject frontCard = Instantiate(cardFrontPrefab, myHandArea);
+            RectTransform frontRT = frontCard.GetComponent<RectTransform>();
+            frontRT.localScale = Vector3.one;
+            frontRT.anchoredPosition = finalPos;
+            frontRT.localRotation = finalRot;
+            frontCard.GetComponent<CardUI>().SetCard(hand[i]);
+        }
     }
 
     IEnumerator DealCardsToPlayers(List<string> playerIds)
