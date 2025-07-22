@@ -23,6 +23,7 @@ public class StartManager : MonoBehaviour
 
     private void OnStartRound(ResponsePacketData.StartRound data)
     {
+        Debug.Log("StartRound: " + data.message);
         if (gameStartText != null)
         {
             // 1초 동안 알파값을 0으로 페이드아웃

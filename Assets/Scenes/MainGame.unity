@@ -1869,6 +1869,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1574714704}
   - component: {fileID: 1574714705}
+  - component: {fileID: 1574714706}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: Untagged
@@ -1918,6 +1919,18 @@ MonoBehaviour:
   submitButton: {fileID: 917071392}
   passButton: {fileID: 1160004458}
   cardPrefab: {fileID: 1873407411163814594, guid: 234cb63a930a74b51bf584c5e04e1f80, type: 3}
+--- !u!114 &1574714706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1574714703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 592e1c5de3de14d6ca053cf3eda36bde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1813951052
 GameObject:
   m_ObjectHideFlags: 0

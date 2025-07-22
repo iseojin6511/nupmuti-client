@@ -661,9 +661,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: OnClickSubmit
+      - m_Target: {fileID: 287339946}
+        m_TargetAssemblyTypeName: WaitingManager, Assembly-CSharp
+        m_MethodName: OnClickStartGameButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

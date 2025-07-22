@@ -38,7 +38,11 @@ public class WaitingManager : MonoBehaviour
 
     private void OnStartGame(ResponsePacketData.StartGame data)
     {
-        SceneManager.LoadScene("StartGame");
+        Debug.Log("StartGame: " + data.message);
+        if (data.success)
+        {
+            SceneManager.LoadScene("StartGame");
+        }
     }
 
 
@@ -46,10 +50,11 @@ public class WaitingManager : MonoBehaviour
     * <서버에서 방 나가기 응답 처리, 성공하면 로비로 이동>
     */
     private void OnLeaveRoom(ResponsePacketData.LeaveRoom data)
-    {
+    {   
+        
         if (data.success)
         {
-            SceneManager.LoadScene("LobbyScene");
+            //SceneManager.LoadScene("LobbyScene");
         }
     }
 
