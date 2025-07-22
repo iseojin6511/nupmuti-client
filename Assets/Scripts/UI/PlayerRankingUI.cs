@@ -10,7 +10,7 @@ public class PlayerRankingUI : MonoBehaviour
 
     private List<GameObject> playerItems = new();
 
-    public void ShowRankings(List<PlayerInfo> allPlayers, string localPlayerId)
+    public void ShowRankings(List<PlayerInfo> allPlayers)
     {
         Debug.Log($"[ShowRankings] Total players: {allPlayers.Count}");
 
