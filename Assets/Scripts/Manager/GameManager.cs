@@ -25,7 +25,11 @@ public class GameManager : MonoBehaviour
         // 서버 응답(신호)에 맞는 핸들러 등록
         // NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourTurn>(OnYourTurn);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.InvalidCard>(OnInvalidCard);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPlayerCardPlayed);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealCards>(OnDealCards);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllInfo>(OnAllInfo);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.RoundStarted>(OnRoundStarted);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealCards>(OnDealCards); // 1106
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.ExchangePhase>(OnExchangePhase); // 1107
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.ExchangeInfo>(OnExchangeInfo); // 1108
@@ -36,7 +40,6 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPlayerCardPlayed); // 1029
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.HasPassed>(OnHasPassed); // 1030
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.UpdateHand>(OnUpdateHand); // 1112
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.RoundStarted>(OnRoundStarted); // 1105
         // ... 기타 필요한 핸들러 등록
     }
 
@@ -45,13 +48,13 @@ public class GameManager : MonoBehaviour
         Debug.Log("RoundStarted: " + data.message);
         playerActionUI.ShowMessage(data.message);
         myPlayerId = data.nickname;
-        cardSpawner.SetLocalPlayerId(myPlayerId);
-        // cardShuffler.CreateCardPile();
+        //cardSpawner.SetLocalPlayerId(myPlayerId);
+        //cardShuffler.CreateCardPile();
     }
 
     private void OnUpdateHand(ResponsePacketData.UpdateHand data)
     {
-        //
+//
     }
 
     private void OnAllInfo(ResponsePacketData.AllInfo data)
@@ -71,6 +74,8 @@ public class GameManager : MonoBehaviour
         playerIds = playerInfos.Select(p => p.nickname).ToList();
         cardShuffler.playerIds = playerIds;
         rankingUI.ShowRankings(playerInfos);
+        cardSpawner.SetLocalPlayerId(myPlayerId);
+        UpdateTurnUI();
 
     }
 
