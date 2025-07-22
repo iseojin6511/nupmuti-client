@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,6 +17,8 @@ public class GameManager : MonoBehaviour
     public UnityEngine.UI.Button passButton;
     [SerializeField] private GameObject cardPrefab;
 
+    //playerInfo를 받을 수 있는 response가 필요해요
+
     private void Start()
     {
         // 서버 응답(신호)에 맞는 핸들러 등록
@@ -28,6 +31,7 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourRank>(OnYourRank);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourOrder>(OnYourOrder);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.PlayerInfo>(OnPlayerInfo);
         // ... 기타 필요한 핸들러 등록
     }
 
@@ -37,6 +41,20 @@ public class GameManager : MonoBehaviour
         playerActionUI.ShowMessage(data.message);
         cardShuffler.CreateCardPile();
 
+    }
+
+    private void OnPlayerInfo(ResponsePacketData.PlayerInfo data)
+    {
+       //TODO: playerINFO 정보 띄우기 왼쪽 패널에 띄우기
+       List<PlayerInfo> playerInfos = new List<PlayerInfo>();
+       for (int i = 0; i < data.nicknames.Count; i++)
+       {
+        PlayerInfo playerInfo = new PlayerInfo();
+        playerInfo.nickname = data.nicknames[i];
+        playerInfo.rank = data.ranks[i];
+        playerInfo.cardValues = data.hands[i];
+        playerInfos.Add(playerInfo);
+       }
     }
 
     // 내 턴 신호가 오면 버튼 활성화
@@ -147,10 +165,11 @@ public class GameManager : MonoBehaviour
         playerActionUI.ShowMessage($"'{currentPlayerId}' Turn!");
         rankingUI.HighlightCurrentPlayer(currentPlayerId);
     }
+
+
 }
 
 /*
-
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
@@ -431,5 +450,4 @@ public class GameManager : MonoBehaviour
         // 턴 넘기지 않음! → UpdateTurnUI 흐름 유지
     }
 }
-
 */

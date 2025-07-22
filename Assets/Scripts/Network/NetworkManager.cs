@@ -140,7 +140,8 @@ public class NetworkManager : MonoBehaviour
         { 1115, typeof(ResponsePacketData.AllPassed) },
         { 1116, typeof(ResponsePacketData.EndTurn) },
         { 1028, typeof(ResponsePacketData.DoneRound) },
-        { 1030, typeof(ResponsePacketData.InvalidCard) }
+        { 1030, typeof(ResponsePacketData.InvalidCard) },
+        { 1031, typeof(ResponsePacketData.AllInfo) }
         // ... 필요시 추가
     };
 

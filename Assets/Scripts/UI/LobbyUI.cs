@@ -57,6 +57,7 @@ public class LobbyUI : MonoBehaviour
             string nickname = nicknameInput.text.Trim();
             var req = new RequestPacketData.EnterRoom(nickname);
             NetworkManager.Instance.Send(req);
+            SceneManager.LoadScene("Waiting");
         }
     }
 

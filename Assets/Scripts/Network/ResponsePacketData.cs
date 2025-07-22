@@ -31,7 +31,7 @@ public abstract record ResponsePacketData
     public sealed record FirstRoundRules(string message) : ResponsePacketData;
 
     // 내 카드 정보
-    public sealed record YourCard(int Cardnum, string cardName, string message) : ResponsePacketData;
+    public sealed record YourCard(int cardNum, string cardName, string message) : ResponsePacketData;
 
     // 내 순위
     public sealed record YourRank(string rank, string message) : ResponsePacketData;
@@ -77,5 +77,7 @@ public abstract record ResponsePacketData
     public sealed record CreateRoom(bool success) : ResponsePacketData;
 
     public sealed record HasPassed(string message) : ResponsePacketData;
+
+    public sealed record AllInfo(List<string> nicknames, List<List<int>> hands , List<string> ranks, List<int> order) : ResponsePacketData;
 
 }
