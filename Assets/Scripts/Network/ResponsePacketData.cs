@@ -31,7 +31,7 @@ public abstract record ResponsePacketData
     public sealed record FirstRoundRules(string message) : ResponsePacketData;
 
     // 내 카드 정보
-    public sealed record YourCard(string cardName, string message) : ResponsePacketData;
+    public sealed record YourCard(int Cardnum, string cardName, string message) : ResponsePacketData;
 
     // 내 순위
     public sealed record YourRank(string rank, string message) : ResponsePacketData;

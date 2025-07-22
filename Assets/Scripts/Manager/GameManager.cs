@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // 서버 응답(신호)에 맞는 핸들러 등록
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.RoundStarted>(OnRoundStarted);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourTurn>(OnYourTurn);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.InvalidCard>(OnInvalidCard);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.PileUpdate>(OnPlayerCardPlayed);
@@ -27,6 +28,14 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourOrder>(OnYourOrder);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed);
         // ... 기타 필요한 핸들러 등록
+    }
+
+    private void OnRoundStarted(ResponsePacketData.RoundStarted data)
+    {
+        Debug.Log("StartRound: " + data.message);
+        playerActionUI.ShowMessage(data.message);
+        cardSpawner.CreateCardPile();
+
     }
 
     // 내 턴 신호가 오면 버튼 활성화
@@ -44,8 +53,10 @@ public class GameManager : MonoBehaviour
         var selectedCards = submitManager.OnSubmit();
         var req = new RequestPacketData.ThrowSubmit(PlayerSession.ClientId, selectedCards);
         NetworkManager.Instance.Send(req);
+        List<int> submittedValues = submitManager.OnSubmit();
         submitButton.interactable = false;
         passButton.interactable = false;
+        NextTurn();
     }
 
     // 패스 버튼 클릭 시 서버에 패스 요청
@@ -70,7 +81,7 @@ public class GameManager : MonoBehaviour
     private void OnDealCards(ResponsePacketData.DealCards data)
     {
         playerActionUI.ShowMessage(data.message);
-        cardShuffler.CreateCardPile();
+        
         // 카드 분배 UI/상태 갱신 (data 구조에 맞게 구현)
     }
 
@@ -92,21 +103,49 @@ public class GameManager : MonoBehaviour
     private void OnPlayerCardPlayed(ResponsePacketData.PileUpdate data)
     {
         playerActionUI.PlayCardFromPlayer(data.playerId, data.cards);
-        // 카드 UI 갱신 등
     }
 
     // 서버에서 상대방 패스 브로드캐스트 신호가 오면 UI 갱신
     private void OnPlayerPassed(ResponsePacketData.HasPassed data)
     {
         playerActionUI.ShowMessage(data.message);
-        // UI 갱신 등
+        NextTurn();
     }
 
     // 서버에서 모두 패스 신호가 오면 센터 카드 정리 등 UI 갱신
     private void OnAllPassed(ResponsePacketData.AllPassed data)
     {
         playerActionUI.ShowMessage(data.message);
+        submitManager.ClearCenterPile();
+
+        yield return new WaitForSeconds(1.0f);  // 연출 후 약간 대기
+        passedPlayers.Clear();
         // 센터 카드 정리 등
+    }
+
+    void NextTurn()
+    {
+        currentTurnIndex = (currentTurnIndex + 1) % playerIds.Count;
+        UpdateTurnUI();
+    }
+    void UpdateTurnUI()
+    {
+        if (submitButton == null || passButton == null) return;
+
+        if (passedPlayers.Count == playerIds.Count - 1)
+        {
+            
+            return; 
+        }
+
+        ProceedTurnUI();
+    }
+
+    private void ProceedTurnUI()
+    {
+        string currentPlayerId = playerIds[currentTurnIndex];
+        playerActionUI.ShowMessage($"'{currentPlayerId}' Turn!");
+        rankingUI.HighlightCurrentPlayer(currentPlayerId);
     }
 }
 

@@ -26,9 +26,6 @@ public class WaitingManager : MonoBehaviour
         // 필요하다면 핸들러 해제 로직 추가 (UnregisterHandler 구현 시)
     }
 
-    /**
-    * <방장 여부 확인>
-    */
 
     private void OnYouAreHost(ResponsePacketData.YouAreHost data)
     {
@@ -79,6 +76,7 @@ public class WaitingManager : MonoBehaviour
     {
         // 게임 시작 요청 패킷 전송
         NetworkManager.Instance.Send(new RequestPacketData.StartGame());
+        SceneManager.LoadScene("StartGame");
     }
 
 

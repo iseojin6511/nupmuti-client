@@ -11,7 +11,7 @@ public class StartManager : MonoBehaviour
     void Start()
     {
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.FirstRoundRules>(OnFirstRoundRules);
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourCard>(OnYourCard);
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourRank>(OnYourRank);
     }
 
     private void OnFirstRoundRules(ResponsePacketData.FirstRoundRules data)
@@ -23,7 +23,7 @@ public class StartManager : MonoBehaviour
         }
     }
 
-    private void OnYourCard(ResponsePacketData.YourCard data)
+    private void OnYourRank(ResponsePacketData.YourRank data)
     {
         // data.number가 카드 값이라고 가정
         if (cardSpawner != null && cardSpawner.cardFrontPrefab != null && cardSpawner.myHandArea != null)
@@ -36,8 +36,10 @@ public class StartManager : MonoBehaviour
             CardUI cardUI = card.GetComponent<CardUI>();
             if (cardUI != null)
             {
-                cardUI.SetCard(data.number); // number가 카드 값
+                cardUI.SetCard(data.rank); // number가 카드 값
             }
+
         }
+
     }
 }
