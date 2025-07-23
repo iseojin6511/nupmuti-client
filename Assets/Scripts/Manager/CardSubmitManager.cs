@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;         // DOTween 애니메이션용
 
+
+
 public class CardSubmitManager : MonoBehaviour
 {
     public Transform handArea;
@@ -44,7 +46,7 @@ public class CardSubmitManager : MonoBehaviour
             submittedCards.Add(card);
         }
 
-        handManager.RearrangeHand();
+        //handManager.RearrangeHand();
         return submittedValues;
     }
 

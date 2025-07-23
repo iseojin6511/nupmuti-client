@@ -17,8 +17,11 @@ public class PlayerActionUI : MonoBehaviour
 
     public void PlayCardFromPlayer(string playerId, List<int> cardValues)
     {
+        Debug.Log($"[PlayCardFromPlayer] 카드 개수: {cardValues}");
         GameObject playerUI = rankingUI.FindPlayerUIById(playerId);
         if (playerUI == null) return;
+
+        Debug.Log("HIHI");
 
         // 1. 카드 오브젝트 생성
         List<GameObject> cardObjects = new List<GameObject>();

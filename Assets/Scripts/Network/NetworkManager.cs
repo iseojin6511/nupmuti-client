@@ -144,10 +144,12 @@ public class NetworkManager : MonoBehaviour
         { 1115, typeof(ResponsePacketData.AllPassed) },
         { 1116, typeof(ResponsePacketData.EndTurn) },
         { 1028, typeof(ResponsePacketData.DoneRound) },
+        { 1029, typeof(ResponsePacketData.PileUpdate) },
         { 1030, typeof(ResponsePacketData.InvalidCard) },
         { 1031, typeof(ResponsePacketData.AllInfo) },
         { 1032, typeof(ResponsePacketData.NextPage) },
         { 1033, typeof(ResponsePacketData.SubmitError) },
+        { 1034, typeof(ResponsePacketData.CurrentTurn)}
         // ... 필요시 추가
     };
 

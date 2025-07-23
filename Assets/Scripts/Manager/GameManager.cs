@@ -26,8 +26,6 @@ public class GameManager : MonoBehaviour
         // 서버 응답(신호)에 맞는 핸들러 등록
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.YourTurn>(OnYourTurn);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.InvalidCard>(OnInvalidCard);
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealCards>(OnDealCards);
-        NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllPassed>(OnAllPassed);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.AllInfo>(OnAllInfo);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.RoundStarted>(OnRoundStarted);
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.DealCards>(OnDealCards); // 1106
@@ -42,6 +40,7 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.UpdateHand>(OnUpdateHand); // 1112 ->  내 카드 목록 
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.ExchangeDone>(OnExchangeDone); // 1113
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.SubmitError>(OnSubmitError); // 1112
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.CurrentTurn>(OnCurrentTurn); // 1034
         // ... 기타 필요한 핸들러 등록
     }
 
@@ -50,19 +49,22 @@ public class GameManager : MonoBehaviour
         Debug.Log("RoundStarted: " + data.message);
         playerActionUI.ShowMessage(data.message);
         myPlayerId = data.nickname;
+        
         //cardSpawner.SetLocalPlayerId(myPlayerId);
         //cardShuffler.CreateCardPile();
     }
 
     private void OnUpdateHand(ResponsePacketData.UpdateHand data) // card
     {
+        Debug.Log("OnUpdateHand");
         cardSpawner.ShowHand(data.hand);
     }
 
     private void OnAllInfo(ResponsePacketData.AllInfo data)
     {
         Debug.Log("OnAllInfo");
-        //TODO: playerINFO 정보 띄우기 왼쪽 패널에 띄우기
+        submitButton.interactable = false;
+        passButton.interactable = false;
         List<PlayerInfo> playerInfos = new List<PlayerInfo>();
         for (int i = 0; i < data.nicknames.Count; i++)
         {
@@ -79,9 +81,10 @@ public class GameManager : MonoBehaviour
         cardSpawner.SetCardValues(myInfo.cardValues);
         rankingUI.ShowRankings(playerInfos);
         cardSpawner.SetLocalPlayerId(myPlayerId);
-        Debug.Log("StartDealing");
-        cardSpawner.StartDealing(playerIds);
-        UpdateTurnUI();
+        //Debug.Log("StartDealing");
+        //cardSpawner.StartDealing(playerIds);
+
+        //TODO : updateturnUI 없앰
     }
     // 내 턴 신호가 오면 버튼 활성화
     private void OnYourTurn(ResponsePacketData.YourTurn data)
@@ -138,6 +141,12 @@ public class GameManager : MonoBehaviour
         Debug.Log("OnSubmitError");
         playerActionUI.ShowMessage(data.message);
     }
+
+    private void OnCurrentTurn(ResponsePacketData.CurrentTurn data) {
+        Debug.Log("OnCurrentTurn");
+        playerActionUI.ShowMessage($"{data.nickname} 턴");
+        rankingUI.HighlightCurrentPlayer(data.nickname);
+    }
     
     
     // private void OnAllPassed(ResponsePacketData.AllPassed data)
@@ -153,16 +162,12 @@ public class GameManager : MonoBehaviour
     // 카드 제출 버튼 클릭 시 서버에 제출 요청
     public void OnClickSubmit()
     {
-        Debug.Log("OnClickSubmit 진입");
         if (!submitButton.interactable) return;
-        Debug.Log("submitButton.interactable 확인");
         var cards = submitManager.OnSubmit();
         var req = new RequestPacketData.PlayCard(cards);
         NetworkManager.Instance.Send(req);
-        List<int> submittedValues = submitManager.OnSubmit();
         submitButton.interactable = false;
         passButton.interactable = false;
-        NextTurn();
     }
 
     // 패스 버튼 클릭 시 서버에 패스 요청
@@ -173,7 +178,6 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.Send(req);
         submitButton.interactable = false;
         passButton.interactable = false;
-        NextTurn();
     }
 
     // 서버에서 카드 제출이 유효하지 않다는 신호가 오면 안내 및 재시도
@@ -188,7 +192,8 @@ public class GameManager : MonoBehaviour
     private void OnDealCards(ResponsePacketData.DealCards data)
     {
         playerActionUI.ShowMessage(data.message);
-
+        Debug.Log("StartDealing");
+        //cardSpawner.StartDealing(playerIds);
         // 카드 분배 UI/상태 갱신 (data 구조에 맞게 구현)
     }
     // 서버에서 상대방 카드 제출 브로드캐스트 신호가 오면 UI 갱신
@@ -203,7 +208,6 @@ public class GameManager : MonoBehaviour
     private void OnPlayerPassed(ResponsePacketData.HasPassed data)
     {
         playerActionUI.ShowMessage(data.message);
-        NextTurn();
     }
 
     private void OnEndTurn(ResponsePacketData.EndTurn data)
@@ -227,39 +231,11 @@ public class GameManager : MonoBehaviour
     {
         playerActionUI.ShowMessage(data.message);
         submitManager.ClearCenterPile();
-        // 연출 후 약간 대기
+        
         passedPlayers.Clear();
-        // 센터 카드 정리 등
-    }
-
-    void NextTurn()
-    {
-        currentTurnIndex = (currentTurnIndex + 1) % playerIds.Count;
-        UpdateTurnUI();
-    }
-    void UpdateTurnUI()
-    {
-        if (submitButton == null || passButton == null) return;
-
-        if (passedPlayers.Count == playerIds.Count - 1)
-        {
-
-            return;
-        }
-
-        ProceedTurnUI();
-    }
-
-    private void ProceedTurnUI()
-    {
-        string currentPlayerId = playerIds[currentTurnIndex];
-        playerActionUI.ShowMessage($"'{currentPlayerId}' Turn!");
-        rankingUI.HighlightCurrentPlayer(currentPlayerId);
+        
     }
     
-    
-
-
 }
 
 /*

@@ -38,13 +38,18 @@ public class CardSpawner : MonoBehaviour
             Debug.Log("localPlayerId is not set!");
             return;
         }
-
-        StartCoroutine(DealCardsToPlayers(playerIds));
     }
 
     public void ShowHand(List<int> hand)
     {
-        // 기존 패 비우기
+        if (hand.Count == cardValues.Count) return;
+
+        if (hand.Count < cardValues.Count) {
+            cardValues = hand;
+            return;
+        }
+         // 기존 패 비우기
+        
         foreach (Transform child in myHandArea)
         {
             Destroy(child.gameObject);
@@ -72,9 +77,10 @@ public class CardSpawner : MonoBehaviour
             frontRT.localRotation = finalRot;
             frontCard.GetComponent<CardUI>().SetCard(hand[i]);
         }
+        cardValues = hand;
     }
 
-    IEnumerator DealCardsToPlayers(List<string> playerIds)
+    public IEnumerator DealCardsToPlayers(List<string> playerIds)
     {
         int myCardIndex = 0;
         int myCardCount = cardValues.Count;

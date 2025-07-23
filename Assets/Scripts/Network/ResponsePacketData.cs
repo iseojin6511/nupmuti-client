@@ -70,7 +70,7 @@ public abstract record ResponsePacketData
     public sealed record ExchangeDone(string message) : ResponsePacketData;
 
     // 내 턴 알림
-    public sealed record YourTurn(string nickname, string message) : ResponsePacketData;
+    public sealed record YourTurn(string message) : ResponsePacketData;
 
     // 카드 더미 업데이트
     public sealed record PileUpdate(string playerId, List<int> cards) : ResponsePacketData;
@@ -98,5 +98,8 @@ public abstract record ResponsePacketData
 
     // 카드 제출 실패
     public sealed record SubmitError(string message) : ResponsePacketData;
+
+    // 현재 턴
+    public sealed record CurrentTurn(string nickname) : ResponsePacketData;
 
 }

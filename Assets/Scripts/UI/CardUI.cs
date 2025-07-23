@@ -7,7 +7,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 {
     public int cardValue;
     public TextMeshProUGUI valueText;
-    public Image background;
+    public Sprite[] cardSprites;
 
     private Outline outline;
     private bool isSelected = false;
@@ -37,6 +37,16 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     {
         cardValue = value;
         valueText.text = value.ToString();
+        /*
+        if (cardSprites != null && value >= 0 && value < cardSprites.Length)
+        {
+            background.sprite = cardSprites[value-1];
+        }
+        else
+        {
+            // 예외 처리: 값이 범위 밖이면 기본 이미지 유지
+            Debug.LogWarning($"CardUI: 카드 값 {value}에 해당하는 이미지가 없습니다.");
+        }*/
     }
 
     public void OnPointerClick(PointerEventData eventData)
