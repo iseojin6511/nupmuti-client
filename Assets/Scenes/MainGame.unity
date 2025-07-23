@@ -1455,6 +1455,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerProfilePrefab: {fileID: 1096692307695329673, guid: 36b4c22ce9ce04c13b8d65a498835288, type: 3}
   playerListPanel: {fileID: 1197313920}
+  profileSprites:
+  - {fileID: 8946663206335213512, guid: dce6a90efebf34cacad7d3291ef52f59, type: 3}
+  - {fileID: 5864101458112632582, guid: 219c8ca002b67437f8946614fa4878ce, type: 3}
+  - {fileID: -7414619268013734374, guid: 915e8ac8b68e24e2b828dcb0786191a5, type: 3}
+  - {fileID: 7390716801938230324, guid: 7612595eebe7b4209854fd198a607c36, type: 3}
+  - {fileID: -230090521013315456, guid: 11317d6b92bff48d89b1e4a60376e26d, type: 3}
+  - {fileID: 1293647662678703695, guid: ff12e01eea1f04abbb60f55315eff59a, type: 3}
 --- !u!114 &1197313922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2126,6 +2133,7 @@ MonoBehaviour:
   deckPosition: {fileID: 1372434556}
   myHandArea: {fileID: 922246912}
   playerRankingUI: {fileID: 1197313921}
+  audioSources: []
   cardValues: 010000000200000004000000040000000500000005000000050000000a0000000a0000000a000000
   radius: 350
   angleRange: 140

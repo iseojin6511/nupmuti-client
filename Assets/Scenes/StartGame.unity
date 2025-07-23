@@ -1050,6 +1050,9 @@ MonoBehaviour:
   deckPosition: {fileID: 922246912}
   myHandArea: {fileID: 922246912}
   playerRankingUI: {fileID: 0}
+  audioSources:
+  - {fileID: 0}
+  - {fileID: 0}
   cardValues: 
   radius: 350
   angleRange: 140

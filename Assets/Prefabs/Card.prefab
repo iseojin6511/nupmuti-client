@@ -92,8 +92,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardValue: 0
   valueText: {fileID: 8116915054421352663}
-  background: {fileID: 4671416127100895675}
-  selectedOutlineColor: {r: 0.745283, g: 0.50535107, b: 0.33397114, a: 1}
+  cardSprites:
+  - {fileID: 1890512261965478541, guid: ca0b33c8982bf4ee39ef362b8821bc06, type: 3}
+  - {fileID: -7278651759357103121, guid: 9ba1b4dc58ed7483694388c8147246df, type: 3}
+  - {fileID: -6686406334566668404, guid: 886a5b918cd42425faacb766732c2108, type: 3}
+  - {fileID: 4991570651299092792, guid: 786e89bea3cfe40e2bc5906ba57338ea, type: 3}
+  - {fileID: 5268715891607429174, guid: b6478c0d9a32b455298d3dbb4e4f0fbf, type: 3}
+  - {fileID: -3664076655124330269, guid: d6e7a37b450f54583a0a15fc0b0ede9b, type: 3}
+  - {fileID: 8101329421332227299, guid: a710fa93b9e0541d7a54d189eaf447c8, type: 3}
+  - {fileID: -1824339326743622313, guid: e9c57a200302041538dc043c564b030f, type: 3}
+  - {fileID: 1201433576026843201, guid: 934787d4b7fe14a11bc2c9f1c7bcc249, type: 3}
+  - {fileID: -1021937291881840321, guid: 8d2b1d7e1c64947e8aa93a7b79c03555, type: 3}
+  - {fileID: -7995023758487731554, guid: 55400f4ee7de040959f8e530127fe05d, type: 3}
+  - {fileID: -3706416582217604212, guid: 9aaa76999af964b2d8283787a27273f7, type: 3}
+  selectedOutlineColor: {r: 1, g: 0.9897165, b: 0.3254717, a: 1}
 --- !u!114 &1641927009254473631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,7 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0.5450981, g: 0.2705882, b: 0.07450981, a: 1}
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 10, y: 10}
   m_UseGraphicAlpha: 1
 --- !u!1 &7816370792961813375
@@ -126,7 +138,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3995971542841799891
 RectTransform:
   m_ObjectHideFlags: 0

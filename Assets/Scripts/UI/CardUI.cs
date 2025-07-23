@@ -37,16 +37,18 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     {
         cardValue = value;
         valueText.text = value.ToString();
-        /*
-        if (cardSprites != null && value >= 0 && value < cardSprites.Length)
-        {
-            background.sprite = cardSprites[value-1];
+        if (cardSprites != null && value > 0 && value < cardSprites.Length+1)
+        {   
+            // 카드 프리팹의 SourceImage(Sprite) 변경
+            var image = GetComponent<Image>();
+            if (image != null)
+                image.sprite = cardSprites[value - 1];
         }
         else
         {
             // 예외 처리: 값이 범위 밖이면 기본 이미지 유지
             Debug.LogWarning($"CardUI: 카드 값 {value}에 해당하는 이미지가 없습니다.");
-        }*/
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -57,10 +59,11 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         if (outline != null)
             outline.effectColor = isSelected ? selectedOutlineColor : originalOutlineColor;
 
-        // ✅ 카드 위치 이동
-        Vector2 pos = rectTransform.anchoredPosition;
-        pos.y += isSelected ? selectedYOffset : -selectedYOffset;
-        rectTransform.anchoredPosition = pos;
+        // ✅ 카드 선택 시 scale을 키우고, 해제 시 원래대로
+        if (isSelected)
+            transform.localScale = originalScale * 1.15f;
+        else
+            transform.localScale = originalScale;
     }
 
     public bool IsSelected() => isSelected;
@@ -73,10 +76,9 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
             if (outline != null)
                 outline.effectColor = originalOutlineColor;
-
-            Vector2 pos = rectTransform.anchoredPosition;
-            pos.y -= selectedYOffset;
-            rectTransform.anchoredPosition = pos;
+            
+            // 선택 해제 시 카드 크기를 원래대로 복원
+            transform.localScale = originalScale;
         }
     }
 

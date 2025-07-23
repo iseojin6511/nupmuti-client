@@ -11,6 +11,7 @@ public class CardSpawner : MonoBehaviour
 
     public Transform myHandArea;
     public PlayerRankingUI playerRankingUI;
+    public AudioSource[] audioSources;
 
     private string localPlayerId;
     [SerializeField] private List<int> cardValues;

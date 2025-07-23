@@ -58,6 +58,11 @@ public class StartManager : MonoBehaviour
     private void OnYourCard(ResponsePacketData.YourCard data)
     {
         // 1. 뒷면 카드 생성 (시작 위치는 HandArea 위쪽)
+        // 카드 받기 사운드 재생 (AudioSource 필요)
+        if (cardSpawner != null && cardSpawner.GetComponent<AudioSource>() != null)
+        {
+            cardSpawner.GetComponent<AudioSource>().Play();
+        }
         GameObject backCard = Instantiate(cardSpawner.cardBackPrefab, HandArea);
         RectTransform backRT = backCard.GetComponent<RectTransform>();
         backRT.localScale = Vector3.one;
