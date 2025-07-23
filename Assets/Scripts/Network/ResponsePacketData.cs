@@ -88,7 +88,7 @@ public abstract record ResponsePacketData
     public sealed record DoneRound(string nickname, string message) : ResponsePacketData;
 
     // 잘못된 카드 제출
-    public sealed record InvalidCard(string message) : ResponsePacketData;
+    public sealed record InvalidCard(bool success, string message) : ResponsePacketData;
 
     // 모든 정보
     public sealed record AllInfo(List<string> nicknames, List<List<int>> hands , List<string> ranks, List<int> order) : ResponsePacketData;

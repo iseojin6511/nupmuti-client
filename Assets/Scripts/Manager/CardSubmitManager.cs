@@ -26,6 +26,22 @@ public class CardSubmitManager : MonoBehaviour
                 submittedValues.Add(cardUI.cardValue);
             }
         }
+        return submittedValues;
+    }
+
+    public List<int> OnClickSubmit()
+    {
+        var selectedCards = new List<GameObject>();
+        var submittedValues = new List<int>();
+
+        foreach (Transform cardTransform in handArea)
+        {
+            var cardUI = cardTransform.GetComponent<CardUI>();
+            if (cardUI != null && cardUI.IsSelected()){
+                selectedCards.Add(cardTransform.gameObject);
+                submittedValues.Add(cardUI.cardValue);
+            }
+        }
 
         float baseOffset = -(selectedCards.Count - 1) * cardSpacing * 0.5f;
 
@@ -46,7 +62,7 @@ public class CardSubmitManager : MonoBehaviour
             submittedCards.Add(card);
         }
 
-        //handManager.RearrangeHand();
+        handManager.RearrangeHand();
         return submittedValues;
     }
 

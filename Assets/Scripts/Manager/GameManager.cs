@@ -120,7 +120,8 @@ public class GameManager : MonoBehaviour
 
     public void OnClickThrow(){
         if (!throwButton.interactable) return;
-        var cards = submitManager.OnSubmit();
+        var cards = submitManager.OnClickSubmit();
+        Debug.Log("OnClickThrow");
         var req = new RequestPacketData.ThrowSubmit(myPlayerId, cards);
         NetworkManager.Instance.Send(req);
         throwButton.interactable = false;
@@ -166,9 +167,10 @@ public class GameManager : MonoBehaviour
         var cards = submitManager.OnSubmit();
         var req = new RequestPacketData.PlayCard(cards);
         NetworkManager.Instance.Send(req);
-        submitButton.interactable = false;
-        passButton.interactable = false;
+       
     }
+
+    
 
     // 패스 버튼 클릭 시 서버에 패스 요청
     public void OnClickPass()
@@ -178,6 +180,18 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.Send(req);
         submitButton.interactable = false;
         passButton.interactable = false;
+    }
+    private void INVALID_CARD(bool success, string message){
+        if (success){
+            submitManager.OnClickSubmit();
+            submitButton.interactable = false;
+            passButton.interactable = false;
+            playerActionUI.ShowMessage(message);
+        } else {
+            submitButton.interactable = true;
+            passButton.interactable = true;
+            playerActionUI.ShowMessage(message);
+        }
     }
 
     // 서버에서 카드 제출이 유효하지 않다는 신호가 오면 안내 및 재시도
