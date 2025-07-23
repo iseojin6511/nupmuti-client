@@ -7,6 +7,7 @@ public class PlayerRankingUI : MonoBehaviour
 {
     public GameObject playerProfilePrefab;
     public Transform playerListPanel;
+    public Sprite[] profileSprites;
 
     private List<GameObject> playerItems = new();
 
@@ -22,7 +23,7 @@ public class PlayerRankingUI : MonoBehaviour
 
         for (int i = 0; i < allPlayers.Count; i++)
         {
-            Debug.Log($"[ShowRankings] Player {i}: {allPlayers[i].nickname}");
+            //Debug.Log($"[ShowRankings] Player {i}: {allPlayers[i].nickname}");
             var p = allPlayers[i];
 
             GameObject item = Instantiate(playerProfilePrefab, playerListPanel, false);
@@ -42,13 +43,21 @@ public class PlayerRankingUI : MonoBehaviour
                 scoreText.text = $"x{p.cardsLeft}";
             }
 
-            // Image/Image 오브젝트에 Outline 없으면 추가
             var profileImage = item.transform.Find("Image/Image/ProfileImage")?.GetComponent<Image>();
             if (profileImage != null)
             {
                 if (p.profileImage != null)
                 {
                     profileImage.sprite = p.profileImage;
+                }
+                else
+                if (i < profileSprites.Length && profileSprites[i] != null)
+                {
+                    profileImage.sprite = profileSprites[i];
+                }
+                else
+                {
+                    Debug.LogWarning($"[PlayerRankingUI] Inspector profileSprites[{i}]가 비어있거나 null입니다.");
                 }
 
                 // Outline 설정
@@ -115,6 +124,17 @@ public class PlayerRankingUI : MonoBehaviour
                 break;
             }
         }
+    }
+
+    private Sprite GetRandomProfileSprite()
+    {
+        int randomIdx = Random.Range(1, 7); // Profile1 ~ Profile6
+        Sprite randomSprite = Resources.Load<Sprite>($"Profile{randomIdx}");
+        if (randomSprite == null)
+        {
+            Debug.LogWarning($"[PlayerRankingUI] Profile{randomIdx} 이미지를 찾을 수 없습니다.");
+        }
+        return randomSprite;
     }
 }
 
