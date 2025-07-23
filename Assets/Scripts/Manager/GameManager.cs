@@ -41,7 +41,14 @@ public class GameManager : MonoBehaviour
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.ExchangeDone>(OnExchangeDone); // 1113
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.SubmitError>(OnSubmitError); // 1112
         NetworkManager.Instance.RegisterHandler<ResponsePacketData.CurrentTurn>(OnCurrentTurn); // 1034
+        NetworkManager.Instance.RegisterHandler<ResponsePacketData.ShowMessage>(OnShowMessage); // 1035
         // ... 기타 필요한 핸들러 등록
+    }
+
+    private void OnShowMessage(ResponsePacketData.ShowMessage data)
+    {
+        Debug.Log("OnShowMessage");
+        playerActionUI.ShowMessage(data.message);
     }
 
     private void OnRoundStarted(ResponsePacketData.RoundStarted data)
@@ -89,6 +96,7 @@ public class GameManager : MonoBehaviour
     // 내 턴 신호가 오면 버튼 활성화
     private void OnYourTurn(ResponsePacketData.YourTurn data)
     {
+        Debug.Log("Got Your Turn Signal");
         submitButton.interactable = true;
         passButton.interactable = true;
         playerActionUI.ShowMessage(data.message);
@@ -200,6 +208,9 @@ public class GameManager : MonoBehaviour
         playerActionUI.ShowMessage(data.message);
         submitButton.interactable = true;
         passButton.interactable = true;
+        if (data.success) {
+            submitManager.OnClickSubmit();
+        }
     }
 
     // 서버에서 카드 분배 신호가 오면 UI 갱신

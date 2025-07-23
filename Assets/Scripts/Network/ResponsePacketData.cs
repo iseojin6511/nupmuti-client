@@ -102,4 +102,6 @@ public abstract record ResponsePacketData
     // 현재 턴
     public sealed record CurrentTurn(string nickname) : ResponsePacketData;
 
+    public sealed record ShowMessage(bool success, string message) : ResponsePacketData;
+
 }
